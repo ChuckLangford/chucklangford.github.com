@@ -7,6 +7,54 @@
 		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Quickstart Jekyll Guide</title>
+				<description>&lt;p&gt;When I finally made the decision to start blogging I had to find a place to host that blog.  I’m a fan of keeping like things in a central location so a blog about development lives in the same place I work, Github.  A quick Google revealed Jekyll as the primary blogging platform that works with Github so I downloaded it.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, being completely ignorant of all things Ruby/Gem made getting this blog off the ground a little more tedious than it should have been; at least that’s what I originally thought.  Turns out, I just confused myself.  Setting up a Jekyll blog is actually quite simple.  Jekyll comes with excellent documentation and there are a few guides available on the net that can be invaluable.  With that in mind, I’m just going to share a few points that stumped me and give you a few required links.&lt;/p&gt;
+
+&lt;h3 id=&quot;but-first-the-quickstart-guide&quot;&gt;But First, the Quickstart Guide&lt;/h3&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Follow &lt;a href=&quot;http://jekyllrb.com/docs/quickstart/&quot;&gt;these instructions&lt;/a&gt; to install and test locally (note: on my OSX, I had to run “sudo gem install jekyll”).&lt;/li&gt;
+  &lt;li&gt;At this point, you could literally edit your files the way you see fit and then check your new blog into the master branch of your Github &lt;a href=&quot;https://pages.github.com/&quot;&gt;personal page&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;just-check-in-everything&quot;&gt;Just Check in Everything&lt;/h3&gt;
+
+&lt;p&gt;Jekyll has a great system that allows you to build your static files and then serve them locally to review your work before publishing.  The documentation explains in great detail all about the directory structure and tells you where the compiled site is generated (the _site folder).  So when I read this I wondered, “So what do I actually push up to Github?”&lt;/p&gt;
+
+&lt;p&gt;Everything.  Plain and simple.&lt;/p&gt;
+
+&lt;p&gt;Github understands a Jekyll blog so it knows what to look for and what to build and what to display.  It just works.&lt;/p&gt;
+
+&lt;h3 id=&quot;templates&quot;&gt;Templates&lt;/h3&gt;
+
+&lt;p&gt;If you like the default look of the Jekyll blog then you’re all set, skip to the next section.  However if you want something a little different then read on.&lt;/p&gt;
+
+&lt;p&gt;Templates are available everywhere.  Google Jekyll templates and pick one you like.  I picked one and I’m pleased with it but once again I had another question that wasn’t immediately obvious, “How do I install the new template?”  Once again, the answer was simple:&lt;/p&gt;
+
+&lt;p&gt;Just copy and paste the files, then use Jekyll to rebuild your static site.&lt;/p&gt;
+
+&lt;p&gt;If you already have posts/drafts, all you need to do is back them up before you copy over everything.  No big deal.&lt;/p&gt;
+
+&lt;h3 id=&quot;static-pages&quot;&gt;Static Pages&lt;/h3&gt;
+
+&lt;p&gt;Finally, I wanted a resume page to exist on my blog.  Jekyll allows you to create static html pages but either it’s not documented or I missed the fact that you can generate a page using markdown that is not a part of the blog.  So here’s my setup.&lt;/p&gt;
+
+&lt;p&gt;In the root of my Jekyll site I created a resume folder.  Inside of that folder, I created index.md and edited that file as my resume.  When Jekyll builds, it generates {site}/resume/index.html.  Which means my resume is addressable as {site}/resume.  Nice.&lt;/p&gt;
+
+&lt;h3 id=&quot;useful-links&quot;&gt;Useful Links&lt;/h3&gt;
+
+&lt;p&gt;Here’s a great article from Smashing Magazine - &lt;a href=&quot;http://www.smashingmagazine.com/2014/08/01/build-blog-jekyll-github-pages/&quot;&gt;Build A Blog With Jekyll And GitHub Pages&lt;/a&gt; &lt;br /&gt;
+The Jekyll site itself - &lt;a href=&quot;http://jekyllrb.com/&quot;&gt;http://jekyllrb.com/&lt;/a&gt; &lt;br /&gt;
+Jekyll’s info about Github Pages - &lt;a href=&quot;http://jekyllrb.com/docs/github-pages/&quot;&gt;http://jekyllrb.com/docs/github-pages/&lt;/a&gt;&lt;/p&gt;
+</description>
+				<pubDate>Tue, 02 Sep 2014 00:00:00 -0400</pubDate>
+				<link>/2014/09/02/quickstart-jekyll-guide.html</link>
+				<guid isPermaLink="true">/2014/09/02/quickstart-jekyll-guide.html</guid>
+			</item>
+		
+			<item>
 				<title>What's This all About?</title>
 				<description>&lt;p&gt;This is pretty much what you expect it to be, another blog from another developer, writing about the things he learns.&lt;/p&gt;
 
