@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title></title>
+		<description>Stylish Jekyll Theme</description>
+		<link>/</link>
+		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
+		
+			<item>
+				<title>What's This all About?</title>
+				<description>&lt;p&gt;This is pretty much what you expect it to be, another blog from another developer, writing about the things he learns.&lt;/p&gt;
+
+&lt;p&gt;I have a few goals for myself with this blog:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Share new things that I learn: My job offers plenty of opportunities to try new things and experiment.&lt;/li&gt;
+  &lt;li&gt;Improve my writing skill: Frankly, it’s time for me to level up in the communication department.&lt;/li&gt;
+  &lt;li&gt;Remember stuff: There’s just too much stuff to remember.  Evernote is great, but a public site has it’s advantages.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So that’s it.  Drafts are in progress and I have a goal of posting on a psuedo regular basis.  We’ll see how this turns out.&lt;/p&gt;
+
+&lt;p&gt;Happy Coding&lt;/p&gt;
+</description>
+				<pubDate>Mon, 01 Sep 2014 00:00:00 -0400</pubDate>
+				<link>/2014/09/01/whats-this.html</link>
+				<guid isPermaLink="true">/2014/09/01/whats-this.html</guid>
+			</item>
+		
+	</channel>
+</rss>
