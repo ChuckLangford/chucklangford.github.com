@@ -40,3 +40,5 @@ In the root of my Jekyll site I created a resume folder.  Inside of that folder,
 Here's a great article from Smashing Magazine - [Build A Blog With Jekyll And GitHub Pages](http://www.smashingmagazine.com/2014/08/01/build-blog-jekyll-github-pages/)   
 The Jekyll site itself - [http://jekyllrb.com/](http://jekyllrb.com/)   
 Jekyll's info about Github Pages - [http://jekyllrb.com/docs/github-pages/](http://jekyllrb.com/docs/github-pages/)
+
+Happy Coding.
