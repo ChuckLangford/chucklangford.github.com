@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>The Critical Rendering Path</title>
+	<title>Navigation Timing and the CRP</title>
 	
 	<meta name="author" content="Chuck Langford">
 
@@ -146,7 +146,7 @@
 
 	<div class="col-sm-9 col-sm-offset-3">
 		<div class="page-header">
-  <h1>The Critical Rendering Path </h1>
+  <h1>Navigation Timing and the CRP </h1>
 </div>
 	
 <article>
@@ -155,45 +155,12 @@
 	 <span class="post-date">
 	   
 	   September 
-	   6th,
+	   7th,
 	   
 	   2014
 	 </span>
 	  <div class="article_body">
-	  <p>Not too long ago, my development studies took me down the web performance path.  There’s a lot to cover when it comes to web site performance ranging from highly technical to just plain common sense.  In this post, I’m going to focus on what I see as a peformance fundamental once you’ve moved past the <a href="https://developer.yahoo.com/performance/rules.html">common sense development</a>.  Let’s talk about the Critical Rendering Path.</p>
-
-<h3 id="what-is-the-critical-rendering-path">What is the Critical Rendering Path?</h3>
-
-<p>Most of the time, a developer is concerned with the performance of his code either on the server or in the browser.  We’re mindful of the objects we create, the memory we consume and how quickly our code executes.  This is great stuff, but there’s another opportunity for improvement.  How quickly can the browser fetch, parse and render our website?  How long does it take for something to appear on the screen after the user clicks a link?  This is what the Critical Rendering Path is all about.</p>
-
-<p>To be thorough, here’s a definition directly <a href="https://developers.google.com/web/fundamentals/performance/critical-rendering-path/">from Google</a>:</p>
-
-<blockquote>
-  <p>Optimizing for performance is all about understanding what happens in these intermediate steps between receiving the HTML, CSS, and JavaScript bytes and the required processing to turn them into rendered pixels - that’s the critical rendering path.</p>
-</blockquote>
-
-<h3 id="the-crp-at-30000ft">The CRP at 30,000ft</h3>
-
-<p>The link above is great reading and tells you everthing you want to know about the CRP, so I’m not going to repeat them here.  Instead, here’s my “CRP Elevator Talk”.</p>
-
-<p>In order to display our website, the browser has to go through a few steps:</p>
-
-<ol>
-  <li>Download all the necessary resources.</li>
-  <li>Parse and create the DOM.</li>
-  <li>Parse and create the CSSOM.</li>
-  <li>Combine the DOM and CSSOM into a Render Tree</li>
-  <li>Execute Javascript.</li>
-  <li>Render the page.</li>
-</ol>
-
-<h3 id="what-is-a-blocking-operation">What is a Blocking Operation?</h3>
-
-<p>A blocking operation is anything that keeps the browser from </p>
-
-<h3 id="can-i-see-the-crp-in-action">Can I see the CRP in Action?</h3>
-
-<h3 id="crp-applied">CRP Applied</h3>
+	  
 
 	  </div>
 
@@ -206,7 +173,7 @@
 		<div>
       <section class="share col-sm-6">
         <h4 class="section-title">Share Post</h4>
-        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=The Critical Rendering Path"
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Navigation Timing and the CRP"
            onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
           <i class="fa fa-twitter fa-lg"></i>
           Twitter
@@ -237,7 +204,7 @@
 		  <li class="previous"><a href="/2014/09/03/intro-to-protractor.html" title="Introduction to Protractor">&larr; Previous</a></li>
 		  
 		  
-			<li class="next disabled"><a>Next &rarr;</a>
+		  <li class="next"><a href="/2014/09/07/critical-rendering-path.html" title="The Critical Rendering Path">Next &rarr;</a></li>
 		  
 		</ul>
 

@@ -15,21 +15,81 @@ To be thorough, here's a definition directly [from Google](https://developers.go
 
 ### The CRP at 30,000ft
 
-The link above is great reading and tells you everthing you want to know about the CRP, so I'm not going to repeat them here.  Instead, here's my "CRP Elevator Talk".
+The link above is great reading and tells you everything you want to know about the CRP, so I'm not going to repeat those details here.  Instead, here's my "CRP Elevator Talk".
 
 In order to display our website, the browser has to go through a few steps:
 
 1.  Download all the necessary resources.
 2.  Parse and create the DOM.
 3.  Parse and create the CSSOM.
-4.  Combine the DOM and CSSOM into a Render Tree
+4.  Combine the DOM and CSSOM into a Render Tree.
 5.  Execute Javascript.
 6.  Render the page.
 
 ### What is a Blocking Operation?
 
-A blocking operation is anything that keeps the browser from 
+A blocking operation is anything that keeps the browser from being able to render the page to the screen, and in the process outlined above, we have a few render blocking operations.
+
+First, we can't display a single thing until we've downloaded the html and text.  Obvious but true.
+
+Second, most browsers treat the CSS as a render blocking operation.  Have you ever seen a site that uses css but for some reason the css isn't applied?  It's not pretty, so most browsers will say "Oh, we have css, let's not show anything until we've calculated and applied all the right styles."
+
+Third Javascript can block in a few different ways.  The first way Javascript will block is with inline scripts.  As we know, Javascript can edit both the DOM and the CSSOM.  Consider this code:
+
+	<html>
+	<head></head>
+	<body>
+	<span>Hello World!</span>
+	<script>
+		var span = document.getElementsByTagName('span')[0];
+        span.textContent = 'Hi!'; // changes the DOM
+	</script>
+	</body>
+	</html>
+
+This code will display "Hi!"" in the browser window.  What if we change it to this?
+
+	<html>
+	<head></head>
+	<body>
+	<script>
+		var span = document.getElementsByTagName('span')[0];
+        span.textContent = 'Hi!'; // changes the DOM
+	</script>
+	<span>Hello World!</span>
+	</body>
+	</html>
+
+Now we see the words "Hello World".  What happened?  Well clearly we've downloaded the necessary resource, the html file.  According to the critical rendering path, the next step is to start parsing the html and begin creating the DOM.  So in the "Hello World!" case, the browser processes the html tag, then the head, then the body and then it gets to our poorly placed script tag.  The script looks for a span element in the current DOM that has been constructed so far.  Since the span element hasn't been processed yet, the script cannot execute properly.  If you check the Chrome dev tool console, you'll see the script tell you it can't find it, because the script blocked the browser from parsing and creating all of the DOM.
+
+It get's even worse when you consider the CSSOM.  Consider, if we had specified a css file in the head for our simple site.  As the browser began to parse and create the DOM, it would come upon the link tag that specified the css file and start to download the file.  As the css file was downloading the browser would continue parsing the rest of the DOM.  Maybe we also decided to change our inline script to edit the page styles:
+
+	<html>
+	<head>
+	<link rel="stylesheet" href="mystyle.css">
+	</head>
+	<body>
+	<span>Hello World!</span>
+	<script>
+		var span = document.getElementsByTagName('span')[0];
+        span.textContent = 'Hi!'; // changes the DOM
+        span.style.color = 'blue';
+	</script>
+	</body>
+	</html>
+
+On a good connection, everything here is fine; the "Hi!" is rendered and it's blue.  A bad connection, however, might notice the page takes a little longer.  In order for the script to be able to edit a style, a CSSOM must exist, but if the css file is still downloading, then the CSSOM hasn't been created.  In this case, the Javascript engine must wait for the css file to download and for the CSSOM to be created.  Only then, can it execute the blue color change.
+
+Additionally, there's another consequence of this style block, the DOM still hasn't been completed.  Another block.
 
 ### Can I see the CRP in Action?
+
+Actually, yes we can see the CRP.  The network tab in the Chrome dev tools gives us snapshot of the CRP in action.  Here's what you do.
+
+Open Chrome, navigate to your site and open up the dev tools (Win - Ctrl + Shift + I, Mac - Cmd + Option + I).  Click the network tab and then refresh your page.  After the page is done loading, dev tools reports with some very useful info.  First of all, at the bottom of dev tools, notice the DOMContentLoaded value (in seconds).  A very brief explanation of DOMContentLoaded is that the DOM has been completely constructed and no css is blocking Javascript execution.  Side note, this is the point where most third party javascript libraries start their execution.
+
+Next, within the Network tab, scroll back up to the top and find the network request for the html file; it's probably the first request.  Note how long it took to make the request and receive the entire file.  Now note the difference between the time it took to get the html file and the DOMContentLoaded event.  This is the time when the CRP is in action.
+
+Ideally, this time difference is small but if it's not, there's room for improvement.
 
 ### CRP Applied
