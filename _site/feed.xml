@@ -7,6 +7,155 @@
 		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>The Critical Rendering Path</title>
+				<description>&lt;p&gt;Not too long ago, my development studies took me down the web performance path.  There’s a lot to cover when it comes to web site performance ranging from highly technical to just plain common sense.  In this post, I’m going to focus on what I see as a peformance fundamental once you’ve moved past the &lt;a href=&quot;https://developer.yahoo.com/performance/rules.html&quot;&gt;common sense development&lt;/a&gt;.  Let’s talk about the Critical Rendering Path.&lt;/p&gt;
+
+&lt;h3 id=&quot;what-is-the-critical-rendering-path&quot;&gt;What is the Critical Rendering Path?&lt;/h3&gt;
+
+&lt;p&gt;Most of the time, a developer is concerned with the performance of his code either on the server or in the browser.  We’re mindful of the objects we create, the memory we consume and how quickly our code executes.  This is great stuff, but there’s another opportunity for improvement.  How quickly can the browser fetch, parse and render our website?  How long does it take for something to appear on the screen after the user clicks a link?  This is what the Critical Rendering Path is all about.&lt;/p&gt;
+
+&lt;p&gt;To be thorough, here’s a definition directly &lt;a href=&quot;https://developers.google.com/web/fundamentals/performance/critical-rendering-path/&quot;&gt;from Google&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Optimizing for performance is all about understanding what happens in these intermediate steps between receiving the HTML, CSS, and JavaScript bytes and the required processing to turn them into rendered pixels - that’s the critical rendering path.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;the-crp-at-30000ft&quot;&gt;The CRP at 30,000ft&lt;/h3&gt;
+
+&lt;p&gt;The link above is great reading and tells you everything you want to know about the CRP, so I’m not going to repeat those details here.  Instead, here’s my “CRP Elevator Talk”.&lt;/p&gt;
+
+&lt;p&gt;In order to display our website, the browser has to go through a few steps (please read Google’s info on the CRP, these steps are overly simplified)	:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Download the html and start to parse/create the DOM.&lt;/li&gt;
+  &lt;li&gt;If there are any specified css files, download and begin to parse/create the CSSOM.&lt;/li&gt;
+  &lt;li&gt;Combine the DOM and CSSOM into a Render Tree.&lt;/li&gt;
+  &lt;li&gt;Execute Javascript.&lt;/li&gt;
+  &lt;li&gt;Render the page.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;what-is-a-blocking-operation&quot;&gt;What is a Blocking Operation?&lt;/h3&gt;
+
+&lt;p&gt;A blocking operation is anything that keeps the browser from being able to render the page to the screen, and in the process outlined above, we have a few render blocking operations.&lt;/p&gt;
+
+&lt;p&gt;First, we can’t display a single thing until we’ve downloaded the html and text.  Obvious but true.&lt;/p&gt;
+
+&lt;p&gt;Second, most browsers treat the CSS as a render blocking operation.  Have you ever seen a site that uses css but for some reason the css isn’t applied?  It’s not pretty, so most browsers will say “Oh, we have css, let’s not show anything until we’ve calculated and applied all the right styles.”&lt;/p&gt;
+
+&lt;p&gt;Third Javascript can block in a few different ways.  The first way Javascript will block is with inline scripts.  As we know, Javascript can edit both the DOM and the CSSOM.  Consider this code:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;html&amp;gt;
+&amp;lt;head&amp;gt;&amp;lt;/head&amp;gt;
+&amp;lt;body&amp;gt;
+&amp;lt;span&amp;gt;Hello World!&amp;lt;/span&amp;gt;
+&amp;lt;script&amp;gt;
+	var span = document.getElementsByTagName(&#39;span&#39;)[0];
+	span.textContent = &#39;Hi!&#39;;
+&amp;lt;/script&amp;gt;
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This code will display “Hi!”” in the browser window.  What if we change it to this?&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;html&amp;gt;
+&amp;lt;head&amp;gt;&amp;lt;/head&amp;gt;
+&amp;lt;body&amp;gt;
+&amp;lt;script&amp;gt;
+	var span = document.getElementsByTagName(&#39;span&#39;)[0];
+	span.textContent = &#39;Hi!&#39;;
+&amp;lt;/script&amp;gt;
+&amp;lt;span&amp;gt;Hello World!&amp;lt;/span&amp;gt;
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we see the words “Hello World”.  What happened?  Well clearly we’ve downloaded the necessary resource, the html file (the DOM is actually created incrementally).  According to the critical rendering path, the next step is to start parsing the html and begin creating the DOM.  So in the “Hello World!” case, the browser processes the html tag, then the head, then the body and then it gets to our poorly placed script tag.  The script looks for a span element in the current DOM that has been constructed so far.  Since the span element hasn’t been processed yet, the script cannot execute properly.  If you check the Chrome dev tool console, you’ll see the script tell you it can’t find it, because the script blocked the browser from parsing and creating all of the DOM.&lt;/p&gt;
+
+&lt;p&gt;It get’s even worse when you consider the CSSOM.  Consider, if we had specified a css file in the head for our simple site.  As the browser began to parse and create the DOM, it would come upon the link tag that specified the css file and start to download the file.  As the css file was downloading the browser would continue parsing the rest of the DOM.  Maybe we also decided to change our inline script to edit the page styles:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;html&amp;gt;
+&amp;lt;head&amp;gt;
+&amp;lt;link rel=&quot;stylesheet&quot; href=&quot;mystyle.css&quot;&amp;gt;
+&amp;lt;/head&amp;gt;
+&amp;lt;body&amp;gt;
+&amp;lt;span&amp;gt;Hello World!&amp;lt;/span&amp;gt;
+&amp;lt;script&amp;gt;
+	var span = document.getElementsByTagName(&#39;span&#39;)[0];
+    span.textContent = &#39;Hi!&#39;; // changes the DOM
+    span.style.color = &#39;blue&#39;;
+&amp;lt;/script&amp;gt;
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;On a good connection, everything here is fine; the “Hi!” is rendered and it’s blue.  A bad connection, however, might notice the page takes a little longer.  In order for the script to be able to edit a style, a CSSOM must exist, but if the css file is still downloading, then the CSSOM hasn’t been created.  In this case, the Javascript engine must wait for the css file to download and for the CSSOM to be created.  Only then, can it execute the blue color change.&lt;/p&gt;
+
+&lt;p&gt;Additionally, there’s another consequence of this style block, the DOM still hasn’t been completed.  Another render block.&lt;/p&gt;
+
+&lt;h3 id=&quot;can-i-see-the-crp-in-action&quot;&gt;Can I see the CRP in Action?&lt;/h3&gt;
+
+&lt;p&gt;Actually, yes we can see the CRP.  The network tab in the Chrome dev tools gives us snapshot of the CRP in action.  Here’s what you do.&lt;/p&gt;
+
+&lt;p&gt;Open Chrome, navigate to your site and open up the dev tools (Win - Ctrl + Shift + I, Mac - Cmd + Option + I).  Click the network tab and then refresh your page.  After the page is done loading, dev tools reports with some very useful info.  First of all, at the bottom of dev tools, notice the DOMContentLoaded value (in seconds).  A very brief explanation of DOMContentLoaded is that the DOM has been completely constructed and no css is blocking Javascript execution.  Side note, this is the point where most third party javascript libraries start their execution.&lt;/p&gt;
+
+&lt;p&gt;Next, within the Network tab, scroll back up to the top and find the network request for the html file; it’s probably the first request.  Note how long it took to make the request and receive the entire file.  Now note the difference between the time it took to get the html file and the DOMContentLoaded event.  This is the time when the CRP is in action.&lt;/p&gt;
+
+&lt;p&gt;Ideally, this time difference is small but if it’s not, there’s room for improvement.&lt;/p&gt;
+
+&lt;h3 id=&quot;crp-applied&quot;&gt;CRP Applied&lt;/h3&gt;
+
+&lt;p&gt;The next natural question is, “How do I optimize the CRP?”.  Well it turns out that the answer is, it depends.&lt;/p&gt;
+
+&lt;p&gt;Our web apps are pretty unique so your site problems aren’t my site problems.  There are, however, a few things we can always check:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Number of resources required for the page to render - minimize the number of css and javascript files that are required for your page.  A lot of CRP time can be spent in network traffic.&lt;/li&gt;
+  &lt;li&gt;Eliminate redirects.  Again, the network traffic matters.&lt;/li&gt;
+  &lt;li&gt;Inline the above the fold css and critical js.&lt;/li&gt;
+  &lt;li&gt;Make sure the javascript on your page is absolutely necessary to render the page.  If it’s not, mark the external javascript file as asynch.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;These suggestions are just the tip of the iceberg; more to come.&lt;/p&gt;
+
+&lt;p&gt;Happy Coding.&lt;/p&gt;
+</description>
+				<pubDate>Thu, 11 Sep 2014 19:03:55 -0400</pubDate>
+				<link>/2014/09/11/critical-rendering-path.html</link>
+				<guid isPermaLink="true">/2014/09/11/critical-rendering-path.html</guid>
+			</item>
+		
+			<item>
+				<title>A/B Testing with Angular</title>
+				<description>
+</description>
+				<pubDate>Mon, 08 Sep 2014 19:27:48 -0400</pubDate>
+				<link>/2014/09/08/ab-test-with-angular.html</link>
+				<guid isPermaLink="true">/2014/09/08/ab-test-with-angular.html</guid>
+			</item>
+		
+			<item>
+				<title>Introduction to Protractor</title>
+				<description>&lt;p&gt;I’m currently working on a project wherein my team has received code from another company.  Ultimately, we’re working to replace the legacy code but in the meantime we still have to work with and support it.&lt;/p&gt;
+
+&lt;p&gt;The project started off well enough, however, a few weeks in we discovered that our inherited code base is a beast, and it bites.  More than once, one of the programmers would be working on a feature, meet the acceptance criteria, turn in his work and then discover that his work created a new bug.  After being frustrated one too many times, we decided end to end testing was in order.  Enter Protractor.&lt;/p&gt;
+
+&lt;h3 id=&quot;where-to-start&quot;&gt;Where to Start&lt;/h3&gt;
+
+&lt;p&gt;For anyone that doesn’t know, Protractor is an end to end (e2e) testing solution specificly tuned to Angular applications.  It uses Selenium, and Jasmine as it’s two primary technologies and allows you to automate launching a browser, going to a specific webpage, and programmatically interacting with items on the page.  Then you can tell Protractor “Ok Protractor, after all the interaction is done, you should see item x display content y.”  It’s super handy.&lt;/p&gt;
+
+&lt;p&gt;To get started, you really only need to go here: &lt;a href=&quot;https://github.com/angular/protractor/blob/master/docs/tutorial.md&quot;&gt;https://github.com/angular/protractor/blob/master/docs/tutorial.md&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The tutorial is clear and straightforward and applying Protractor to your Angular application is incredibly intuitive.  We had a login/logout test running in about 5 minutes.&lt;/p&gt;
+
+&lt;p&gt;Happy Coding.&lt;/p&gt;
+</description>
+				<pubDate>Mon, 08 Sep 2014 19:09:28 -0400</pubDate>
+				<link>/2014/09/08/intro-to-protractor.html</link>
+				<guid isPermaLink="true">/2014/09/08/intro-to-protractor.html</guid>
+			</item>
+		
+			<item>
 				<title>Introduction to Protractor</title>
 				<description>&lt;p&gt;I’m currently working on a project wherein my team has received code from another company.  Ultimately, we’re working to replace the legacy code but in the meantime we still have to work with and support it.&lt;/p&gt;
 
@@ -25,6 +174,72 @@
 				<pubDate>Mon, 08 Sep 2014 00:00:00 -0400</pubDate>
 				<link>/2014/09/08/intro-to-protractor.html</link>
 				<guid isPermaLink="true">/2014/09/08/intro-to-protractor.html</guid>
+			</item>
+		
+			<item>
+				<title>Navigation Timing and the CRP</title>
+				<description>
+</description>
+				<pubDate>Sun, 07 Sep 2014 19:25:08 -0400</pubDate>
+				<link>/2014/09/07/navigation-timing-and-crp.html</link>
+				<guid isPermaLink="true">/2014/09/07/navigation-timing-and-crp.html</guid>
+			</item>
+		
+			<item>
+				<title>On Choosing an Employer</title>
+				<description>
+</description>
+				<pubDate>Tue, 02 Sep 2014 22:41:00 -0400</pubDate>
+				<link>/2014/09/02/on-choosing-an-employer.html</link>
+				<guid isPermaLink="true">/2014/09/02/on-choosing-an-employer.html</guid>
+			</item>
+		
+			<item>
+				<title>Quickstart Jekyll Guide</title>
+				<description>&lt;p&gt;When I finally made the decision to start blogging I had to find a place to host that blog.  I’m a fan of keeping like things in a central location so a blog about development lives in the same place I work, Github.  A quick Google revealed Jekyll as the primary blogging platform that works with Github so I downloaded it.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately, being completely ignorant of all things Ruby/Gem made getting this blog off the ground a little more tedious than it should have been; at least that’s what I originally thought.  Turns out, I just confused myself.  Setting up a Jekyll blog is actually quite simple.  Jekyll comes with excellent documentation and there are a few guides available on the net that can be invaluable.  With that in mind, I’m just going to share a few points that stumped me and give you a few required links.&lt;/p&gt;
+
+&lt;h3 id=&quot;but-first-the-quickstart-guide&quot;&gt;But First, the Quickstart Guide&lt;/h3&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Follow &lt;a href=&quot;http://jekyllrb.com/docs/quickstart/&quot;&gt;these instructions&lt;/a&gt; to install and test locally (note: on my OSX, I had to run “sudo gem install jekyll”).&lt;/li&gt;
+  &lt;li&gt;At this point, you could literally edit your files the way you see fit and then check your new blog into the master branch of your Github &lt;a href=&quot;https://pages.github.com/&quot;&gt;personal page&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;just-check-in-everything&quot;&gt;Just Check in Everything&lt;/h3&gt;
+
+&lt;p&gt;Jekyll has a great system that allows you to build your static files and then serve them locally to review your work before publishing.  The documentation explains in great detail all about the directory structure and tells you where the compiled site is generated (the _site folder).  So when I read this I wondered, “So what do I actually push up to Github?”&lt;/p&gt;
+
+&lt;p&gt;Everything.  Plain and simple.&lt;/p&gt;
+
+&lt;p&gt;Github understands a Jekyll blog so it knows what to look for and what to build and what to display.  It just works.&lt;/p&gt;
+
+&lt;h3 id=&quot;templates&quot;&gt;Templates&lt;/h3&gt;
+
+&lt;p&gt;If you like the default look of the Jekyll blog then you’re all set, skip to the next section.  However if you want something a little different then read on.&lt;/p&gt;
+
+&lt;p&gt;Templates are available everywhere.  Google Jekyll templates and pick one you like.  I picked one and I’m pleased with it but once again I had another question that wasn’t immediately obvious, “How do I install the new template?”  Once again, the answer was simple:&lt;/p&gt;
+
+&lt;p&gt;Just copy and paste the files, then use Jekyll to rebuild your static site.&lt;/p&gt;
+
+&lt;p&gt;If you already have posts/drafts, all you need to do is back them up before you copy over everything.  No big deal.&lt;/p&gt;
+
+&lt;h3 id=&quot;static-pages&quot;&gt;Static Pages&lt;/h3&gt;
+
+&lt;p&gt;Finally, I wanted a resume page to exist on my blog.  Jekyll allows you to create static html pages but either it’s not documented or I missed the fact that you can generate a page using markdown that is not a part of the blog.  So here’s my setup.&lt;/p&gt;
+
+&lt;p&gt;In the root of my Jekyll site I created a resume folder.  Inside of that folder, I created index.md and edited that file as my resume.  When Jekyll builds, it generates {site}/resume/index.html.  Which means my resume is addressable as {site}/resume.  Nice.&lt;/p&gt;
+
+&lt;h3 id=&quot;useful-links&quot;&gt;Useful Links&lt;/h3&gt;
+
+&lt;p&gt;Here’s a great article from Smashing Magazine - &lt;a href=&quot;http://www.smashingmagazine.com/2014/08/01/build-blog-jekyll-github-pages/&quot;&gt;Build A Blog With Jekyll And GitHub Pages&lt;/a&gt; &lt;br /&gt;
+The Jekyll site itself - &lt;a href=&quot;http://jekyllrb.com/&quot;&gt;http://jekyllrb.com/&lt;/a&gt; &lt;br /&gt;
+Jekyll’s info about Github Pages - &lt;a href=&quot;http://jekyllrb.com/docs/github-pages/&quot;&gt;http://jekyllrb.com/docs/github-pages/&lt;/a&gt;&lt;/p&gt;
+</description>
+				<pubDate>Tue, 02 Sep 2014 13:44:28 -0400</pubDate>
+				<link>/2014/09/02/using_jekyll.html</link>
+				<guid isPermaLink="true">/2014/09/02/using_jekyll.html</guid>
 			</item>
 		
 			<item>
@@ -75,6 +290,27 @@ Jekyll’s info about Github Pages - &lt;a href=&quot;http://jekyllrb.com/docs/g
 				<pubDate>Tue, 02 Sep 2014 00:00:00 -0400</pubDate>
 				<link>/2014/09/02/quickstart-jekyll-guide.html</link>
 				<guid isPermaLink="true">/2014/09/02/quickstart-jekyll-guide.html</guid>
+			</item>
+		
+			<item>
+				<title>What's This all About?</title>
+				<description>&lt;p&gt;This is pretty much what you expect it to be, another blog from another developer, writing about the things he learns as a programmer.&lt;/p&gt;
+
+&lt;p&gt;I have a few goals for myself with this blog:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Share new things that I learn: My job offers plenty of opportunities to try new things and experiment.&lt;/li&gt;
+  &lt;li&gt;Improve my writing skill: Frankly, it’s time for me to level up in the communication department.&lt;/li&gt;
+  &lt;li&gt;Remember stuff: There’s just too much stuff to remember.  Evernote is great, but a public site has it’s advantages.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So that’s it.  Drafts are in progress and I have a goal of posting on a psuedo regular basis.  We’ll see how this turns out.&lt;/p&gt;
+
+&lt;p&gt;Happy Coding&lt;/p&gt;
+</description>
+				<pubDate>Mon, 01 Sep 2014 20:37:19 -0400</pubDate>
+				<link>/2014/09/01/draft1.html</link>
+				<guid isPermaLink="true">/2014/09/01/draft1.html</guid>
 			</item>
 		
 			<item>

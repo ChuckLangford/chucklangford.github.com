@@ -17,14 +17,13 @@ To be thorough, here's a definition directly [from Google](https://developers.go
 
 The link above is great reading and tells you everything you want to know about the CRP, so I'm not going to repeat those details here.  Instead, here's my "CRP Elevator Talk".
 
-In order to display our website, the browser has to go through a few steps:
+In order to display our website, the browser has to go through a few steps (please read Google's info on the CRP, these steps are overly simplified)	:
 
-1.  Download all the necessary resources.
-2.  Parse and create the DOM.
-3.  Parse and create the CSSOM.
-4.  Combine the DOM and CSSOM into a Render Tree.
-5.  Execute Javascript.
-6.  Render the page.
+1.  Download the html and start to parse/create the DOM.
+2.  If there are any specified css files, download and begin to parse/create the CSSOM.
+3.  Combine the DOM and CSSOM into a Render Tree.
+4.  Execute Javascript.
+5.  Render the page.
 
 ### What is a Blocking Operation?
 
@@ -42,7 +41,7 @@ Third Javascript can block in a few different ways.  The first way Javascript wi
 	<span>Hello World!</span>
 	<script>
 		var span = document.getElementsByTagName('span')[0];
-        span.textContent = 'Hi!'; // changes the DOM
+		span.textContent = 'Hi!';
 	</script>
 	</body>
 	</html>
@@ -54,13 +53,13 @@ This code will display "Hi!"" in the browser window.  What if we change it to th
 	<body>
 	<script>
 		var span = document.getElementsByTagName('span')[0];
-        span.textContent = 'Hi!'; // changes the DOM
+		span.textContent = 'Hi!';
 	</script>
 	<span>Hello World!</span>
 	</body>
 	</html>
 
-Now we see the words "Hello World".  What happened?  Well clearly we've downloaded the necessary resource, the html file.  According to the critical rendering path, the next step is to start parsing the html and begin creating the DOM.  So in the "Hello World!" case, the browser processes the html tag, then the head, then the body and then it gets to our poorly placed script tag.  The script looks for a span element in the current DOM that has been constructed so far.  Since the span element hasn't been processed yet, the script cannot execute properly.  If you check the Chrome dev tool console, you'll see the script tell you it can't find it, because the script blocked the browser from parsing and creating all of the DOM.
+Now we see the words "Hello World".  What happened?  Well clearly we've downloaded the necessary resource, the html file (the DOM is actually created incrementally).  According to the critical rendering path, the next step is to start parsing the html and begin creating the DOM.  So in the "Hello World!" case, the browser processes the html tag, then the head, then the body and then it gets to our poorly placed script tag.  The script looks for a span element in the current DOM that has been constructed so far.  Since the span element hasn't been processed yet, the script cannot execute properly.  If you check the Chrome dev tool console, you'll see the script tell you it can't find it, because the script blocked the browser from parsing and creating all of the DOM.
 
 It get's even worse when you consider the CSSOM.  Consider, if we had specified a css file in the head for our simple site.  As the browser began to parse and create the DOM, it would come upon the link tag that specified the css file and start to download the file.  As the css file was downloading the browser would continue parsing the rest of the DOM.  Maybe we also decided to change our inline script to edit the page styles:
 
@@ -80,7 +79,7 @@ It get's even worse when you consider the CSSOM.  Consider, if we had specified 
 
 On a good connection, everything here is fine; the "Hi!" is rendered and it's blue.  A bad connection, however, might notice the page takes a little longer.  In order for the script to be able to edit a style, a CSSOM must exist, but if the css file is still downloading, then the CSSOM hasn't been created.  In this case, the Javascript engine must wait for the css file to download and for the CSSOM to be created.  Only then, can it execute the blue color change.
 
-Additionally, there's another consequence of this style block, the DOM still hasn't been completed.  Another block.
+Additionally, there's another consequence of this style block, the DOM still hasn't been completed.  Another render block.
 
 ### Can I see the CRP in Action?
 
@@ -93,3 +92,16 @@ Next, within the Network tab, scroll back up to the top and find the network req
 Ideally, this time difference is small but if it's not, there's room for improvement.
 
 ### CRP Applied
+
+The next natural question is, "How do I optimize the CRP?".  Well it turns out that the answer is, it depends.
+
+Our web apps are pretty unique so your site problems aren't my site problems.  There are, however, a few things we can always check:
+
+1.  Number of resources required for the page to render - minimize the number of css and javascript files that are required for your page.  A lot of CRP time can be spent in network traffic.
+2.  Eliminate redirects.  Again, the network traffic matters.
+3.  Inline the above the fold css and critical js.
+4.  Make sure the javascript on your page is absolutely necessary to render the page.  If it's not, mark the external javascript file as asynch.
+
+These suggestions are just the tip of the iceberg; more to come.
+
+Happy Coding.
