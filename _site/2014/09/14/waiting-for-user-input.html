@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Navigation Timing and the CRP</title>
+	<title>Waiting for User Input</title>
 	
 	<meta name="author" content="Chuck Langford">
 
@@ -146,7 +146,7 @@
 
 	<div class="col-sm-9 col-sm-offset-3">
 		<div class="page-header">
-  <h1>Navigation Timing and the CRP </h1>
+  <h1>Waiting for User Input </h1>
 </div>
 	
 <article>
@@ -155,12 +155,32 @@
 	 <span class="post-date">
 	   
 	   September 
-	   7th,
+	   14th,
 	   
 	   2014
 	 </span>
 	  <div class="article_body">
-	  
+	  <p>I love it when things are crazy simple and this is something I want to remember.</p>
+
+<p>My current project has a form that can be filtered with user input via a textbox.  Pretty simple AJAX stuff, nothing too fancy.  Another developer outside the team even coded it for us so hurray for freebies.  He even went as far as implementing a pretty simple system to keep the input from overloading the server with search queries.</p>
+
+<p>The problem is, it wasn’t quite enough.  We noticed that just simply typing two or three characters resulted in a minimum of two queries sent to the server.  That’s nothing too worrying, however, one of my designers was trying to implement animations on the search results to help the user understand that something is happening while they’re typing and multiple searches were killing the animations ability to keep up.  This resulted in a “janky” animation.</p>
+
+<p>We decided to implement this code in order to make the search wait until the user stops typing:</p>
+
+<pre><code>var keywait;
+$scope.searchChanged = function () {
+	clearTimeout(keywait);
+	keywait = setTimeout(function () {
+		if ($scope.querying) {
+			$scope.queryOnReturn = true;
+			return;
+		}
+
+		getActivities();
+	}, 240);
+};
+</code></pre>
 
 	  </div>
 
@@ -173,7 +193,7 @@
 		<div>
       <section class="share col-sm-6">
         <h4 class="section-title">Share Post</h4>
-        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Navigation Timing and the CRP"
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Waiting for User Input"
            onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
           <i class="fa fa-twitter fa-lg"></i>
           Twitter
@@ -201,10 +221,10 @@
 
 		<ul class="pager">
 		  
-		  <li class="previous"><a href="/2014/09/02/on-choosing-an-employer.html" title="On Choosing an Employer">&larr; Previous</a></li>
+		  <li class="previous"><a href="/2014/09/12/angular-error-pages.html" title="Angular Error Pages">&larr; Previous</a></li>
 		  
 		  
-		  <li class="next"><a href="/2014/09/08/intro-to-protractor.html" title="Introduction to Protractor">Next &rarr;</a></li>
+			<li class="next disabled"><a>Next &rarr;</a>
 		  
 		</ul>
 
