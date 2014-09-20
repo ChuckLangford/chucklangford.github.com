@@ -22,3 +22,4 @@
 - Don't forget the basics
 - Relating performance to value
 - The importance of page speed on user perception
+- Tags
