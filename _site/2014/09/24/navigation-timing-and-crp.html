@@ -155,8 +155,8 @@
 	 <span class="post-date">
 	   
 	   September 
-	   22nd,
-	     
+	   24th,
+	   
 	   2014
 	 </span>
 	  <div class="article_body">
@@ -169,6 +169,50 @@
 <p>There are three separate api’s that are available: Navigation, Resource, and User.</p>
 
 <h3 id="navigation-timing">Navigation Timing</h3>
+
+<p>Navigation timing is where you should start your performance measurements; it tells us how long our pages take to load.  In fact, it goes into incredible detail about each step the browser is taking to actually retrieve a web page.  Let’s take a brief look at what the api can do.</p>
+
+<p><strong>navigationStart</strong> - This attribute returns the time immediately after the page unload event has finished.  Basically, if there was a previous page loaded in the browser and you navigate to a new one, a page unload event occurrs.  navigationStart returns the time immediately after this event.</p>
+
+<p><strong>unloadEventStart</strong></p>
+
+<p><strong>unloadEventEnd</strong></p>
+
+<p><strong>redirectStart</strong></p>
+
+<p><strong>redirectEnd</strong></p>
+
+<p><strong>fetchStart</strong></p>
+
+<p><strong>domainLookupStart</strong></p>
+
+<p><strong>domainLookupEnd</strong></p>
+
+<p><strong>connectStart</strong></p>
+
+<p><strong>connectEnd</strong></p>
+
+<p><strong>secureConnectionStart</strong></p>
+
+<p><strong>requestStart</strong></p>
+
+<p><strong>responseStart</strong></p>
+
+<p><strong>responseEnd</strong></p>
+
+<p><strong>domLoading</strong></p>
+
+<p><strong>domInteractive</strong></p>
+
+<p><strong>domContentLoadedEventStart</strong></p>
+
+<p><strong>domContentLoadedEventEnd</strong></p>
+
+<p><strong>domComplete</strong></p>
+
+<p><strong>loadEventStart</strong></p>
+
+<p><strong>loadEventEnd</strong></p>
 
 <h3 id="resource-timing">Resource Timing</h3>
 
