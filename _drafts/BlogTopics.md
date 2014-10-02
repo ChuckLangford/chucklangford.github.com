@@ -23,3 +23,4 @@
 - Relating performance to value
 - The importance of page speed on user perception
 - Tags
+- The new html parser: pup
