@@ -24,3 +24,4 @@
 - The importance of page speed on user perception
 - Tags
 - The new html parser: pup
+- Manually auditing site performance

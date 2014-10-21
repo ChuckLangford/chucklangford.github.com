@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Navigation Timing</title>
+	
+	<meta name="author" content="Chuck Langford">
+
+	<!-- Enable responsive viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Le styles -->
+	<link href="/assets/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/assets/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/assets/resources/syntax/syntax.css" rel="stylesheet">
+	<link href="/assets/css/style.css" rel="stylesheet">
+
+	<!-- Le fav and touch icons -->
+	<!-- Update these with your own images
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+	-->
+
+	<link rel="alternate" type="application/rss+xml" title="" href="/feed.xml">
+</head>
+
+<body>
+	<nav class="navbar navbar-default visible-xs" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+			<a type="button" class="navbar-toggle nav-link" href="http://github.com/ChuckLangford">
+				<i class="fa fa-github"></i>
+			</a>
+			
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="mailto:field.email@gmail.com">
+				<i class="fa fa-envelope"></i>
+			</a>
+			
+			<a class="navbar-brand" href="/">
+				<img src="http://www.gravatar.com/avatar/0ab827d396485b42425e5db32283998e?s=35" class="img-circle" />
+				
+			</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="/">Home</a></li>
+				<li><a href="/categories.html">Categories</a></li>
+				<li><a href="/tags.html">Tags</a></li>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</nav>
+
+	<!-- nav-menu-dropdown -->
+	<div class="btn-group hidden-xs" id="nav-menu">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			<i class="fa fa-bars"></i>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="/"><i class="fa fa-home"></i>Home</a></li>
+			<li><a href="/categories.html"><i class="fa fa-folder"></i>Categories</a></li>
+			<li><a href="/tags.html"><i class="fa fa-tags"></i>Tags</a></li>
+			<li class="divider"></li>
+			<li><a href="#"><i class="fa fa-arrow-up"></i>Top of Page</a></li>
+		</ul>
+	</div>
+
+	<div class="col-sm-3 sidebar hidden-xs">
+		<! -- sidebar.html -->
+<header class="sidebar-header" role="banner">
+	<a href="/">
+		<img src="http://www.gravatar.com/avatar/0ab827d396485b42425e5db32283998e?s=150" class="img-circle" />
+	</a>
+	<h3 class="title">
+        <a href="/"></a>
+    </h3>
+</header>
+
+
+<div id="bio" class="text-center">
+	Thoughts from a software dev working with the .NET and MEAN stacks.
+</div>
+
+
+<div id="contact-list" class="text-center">
+	<ul class="list-unstyled list-inline">
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="/resume">
+				<i class="fa fa-file-text"></i>
+			</a>
+		</li>
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://github.com/ChuckLangford">
+				<i class="fa fa-github-alt fa-lg"></i>
+			</a>
+		</li>
+		
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="mailto:field.email@gmail.com">
+				<i class="fa fa-envelope fa-lg"></i>
+			</a>
+		</li>
+		
+	</ul>
+	<ul id="contact-list-secondary" class="list-unstyled list-inline">
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://linkedin.com/in/chucklangford">
+				<i class="fa fa-linkedin fa-lg"></i>
+			</a>
+		</li>
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="/feed.xml">
+				<i class="fa fa-rss fa-lg"></i>
+			</a>
+		</li>
+	</ul>
+</div>
+<! -- sidebar.html end -->
+
+	</div>
+
+	<div class="col-sm-9 col-sm-offset-3">
+		<div class="page-header">
+  <h1>Navigation Timing </h1>
+</div>
+	
+<article>
+
+	<div class="col-sm-10">
+	 <span class="post-date">
+	   
+	   October 
+	   1st,
+	     
+	   2014
+	 </span>
+	  <div class="article_body">
+	  <p>I was fortunate enough to be able to attend the Velocity conference in New York and I have to say, I’m pretty pumped about what I’ve learned.  There’s actually so much to share that it’ll take a little time to get through so today I thought I’d start with the timing api’s.</p>
+
+<h3 id="what-are-the-timing-apis">What are the Timing API’s?</h3>
+
+<p>Long story short, the api’s allow us to measure real web page timing metrics using javascript.  This is awesome because we can report on exactly what kind of experience our users are actually having when they visit our sites.</p>
+
+<p>There are three separate api’s that are available: Navigation, Resource, and User.  We’ll go over Navigation Timing in this post.</p>
+
+<h3 id="navigation-timing">Navigation Timing</h3>
+
+<p>Navigation timing is where you should start your performance measurements; it tells us how long our pages take to load.  In fact, it goes into incredible detail about each step the browser is taking to retrieve a web page.  Here’s a quick rundown of the information that the api provides.</p>
+
+<p><strong>navigationStart</strong> - This attribute returns the time immediately after the page unload event has finished.  Basically, if there was a previous page loaded in the browser and you navigate to a new one, a page unload event occurrs.  navigationStart returns the time immediately after this event.</p>
+
+<p><strong>unloadEventStart</strong> - As you leave a web page within a browser, the browser fires an unload event.  The unloadEventStart attribute returns the starting time of the unload event.  You would use this with the next attribute, unloadEventEnd, to measure how long the unload event takes to complete.  This attribute, and it’s sibling, only work if there was a previous document and that document was on the same domain.</p>
+
+<p><strong>unloadEventEnd</strong> - This is the end time of the unload event.  unloadEventEnd - unloadEventStart = How long the unload event took.</p>
+
+<p><strong>redirectStart</strong> - If one of your pages redirects to another page on the same domain, this attribute gives us the starting time of the document fetch.  Like the previous two attributes, it works best with it’s sibling…</p>
+
+<p><strong>redirectEnd</strong> - There are a lot of Start/End pairs in the api.  redirectEnd - redirectStart = How long it took redirect to another page and receive all the bytes for the new page.</p>
+
+<p><strong>fetchStart</strong> - This returns the time before the browser issues an HTTP GET and before it checks it’s local cache.</p>
+
+<p><strong>domainLookupStart</strong> - This one is what you expect it to be, the start time of the browser issuing a DNS lookup for a resource, but there is a bit more to understand.  If your browser has a persistent connection to the server or if the resource is found in the local browser cache, then this attribute will return the same value as fetchStart.</p>
+
+<p><strong>domainLookupEnd</strong> - Again, this one will either be the end time of looking up the domain or, if the resource is in browser cache, it will return the same value as fetchStart.  There’s also one more interesting piece of info to know, browsers can cache their own DNS records.  So these two attributes, domainLookupStart and domainLookupEnd, can reflect the DNS lookup values from the browser’s cache.</p>
+
+<p><strong>connectStart</strong> - After a browser has retrieved the DNS records, it’s very next step is to connect to our web server.  This attribute reflects the starting time of that connection.  If the resource was in the local cache or the browser has a persistent connection, this value is equal to domainLookupEnd.</p>
+
+<p><strong>connectEnd</strong> - Hurray we established a connection, here’s how long it took: connectEnd - connectStart.  This attribute is also subject to local cache or persistent connections (so it would equal the same thing as domainLookupEnd).  connectEnd also encompasses the time to establish SSL handshakes.  Finally, if a connection attempt fails before it succeeds, then connectStart and connectEnd will only tell us the time values for the successful connection.</p>
+
+<p><strong>secureConnectionStart</strong> - Unfortunately, this one is currently optional for the browsers.  If a browser does implement it, this is the time just before the SSL handshake process.  If a browser doesn’t implement this, it is suppossed to return undefined.</p>
+
+<p><strong>requestStart</strong> - This one confused me for a bit.  requestStart is the time value of when the browser requests the page.  At first, it sounds a lot like fetchStart, and for the most part these two values are probably going to be really close.  The difference, however, is that fetchStart happens before cache/DNS lookups and before connections.  requestStart represents the start time after all those previous steps have finished and the browser can confidently ask for the resource from the correct place.  Notice that there is no requestEnd attribute.  From the documentation and various W3C chat’s I found, a requestEnd attribute was both difficult to define and implement.</p>
+
+<p><strong>responseStart</strong> - This is the time immediately after the browser has received the first byte from the server/cache/local resource.</p>
+
+<p><strong>responseEnd</strong> - This is either the time immediately after receiving the last byte from the server/cache/local resource or it’s the time just before the transport connection is closed, whichever comes first.</p>
+
+<p><strong>domLoading</strong> - This is the time just before the browser sets the “current document readiness” state to “loading”.  Honestly, I had no idea what any of that meant so I looked it up.  Here’s the link <a href="http://www.w3.org/TR/html5/dom.html#current-document-readiness">http://www.w3.org/TR/html5/dom.html#current-document-readiness</a>.  Basically, the document object has <a href="http://www.w3.org/TR/html5/dom.html#the-document-object">three states</a>: loading, interactive, and complete (loading while the DOM is still loading, interactive once the DOM is parsed but we’re still waiting on subresources, and complete is all done).  You can see it by going to your browser’s console and typing document.readyState.</p>
+
+<p><strong>domInteractive</strong> - If any of my domLoading explanation made sense, then this should be apparent.  This is the time just before the document readiness is set to “interactive”.  It also represents the time after blocking scripts have been executed (inline scripts or src scripts that didn’t use defer or asynch).</p>
+
+<p><strong>domContentLoadedEventStart</strong> - This is the time right before the DOMContentLoaded event.  It also represents the time after the browser has parsed all the scripts that used the defer attribute and not the async attribute.  (So when do async script run?  As soon as they are downloaded they are run… asynchronously).</p>
+
+<p><strong>domContentLoadedEventEnd</strong> - This is the time right after the DOMContentLoaded event.  This happens once all scripts that are not part of the load event have completed.</p>
+
+<p><strong>domComplete</strong> - This is just before the document readiness state is set to complete.  </p>
+
+<p><strong>loadEventStart</strong> - This is just before the document’s load event is fired.</p>
+
+<p><strong>loadEventEnd</strong> - This is just after the document’s load event.  If the event was not fired or not completed, this is zero.</p>
+
+<h3 id="so-what-do-we-do-with-all-this">So What Do We Do With All This?</h3>
+
+<p>Measure All The Things!  Literally, just start measuring.  There’s a lot of information at our fingertips and it can be combined in various useful ways.  Here’s an example from a GitHub repo by Alois Reitbauer (a member of the W3C performance group).  You can find the repo here: <a href="https://github.com/AloisReitbauer/w3cinpractice">https://github.com/AloisReitbauer/w3cinpractice</a></p>
+
+<pre><code>var timing= performance.timing;
+var loadTime= (timing.loadEventEnd- timing.navigationStart)/1000;
+console.log('Page took ' + loadTime.toFixed(2) + ' seconds to load');
+</code></pre>
+
+<p>That’s just the start.  By recording various combinations of these, we can start to understand real user metrics (RUM) and make our users’ experiences better.</p>
+
+<p>Happpy Coding.</p>
+
+	  </div>
+
+		  
+
+		  
+
+		<hr>
+
+		<div>
+      <section class="share col-sm-6">
+        <h4 class="section-title">Share Post</h4>
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Navigation Timing"
+           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+          <i class="fa fa-twitter fa-lg"></i>
+          Twitter
+        </a>
+        <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+           onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+          <i class="fa fa-facebook fa-lg"></i>
+          Facebook
+        </a>
+        <a class="btn btn-default btn-sm gplus"
+           onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+          <i class="fa fa-google-plus fa-lg"></i>
+          Google+
+        </a>
+      </section>
+
+      <section class="col-sm-6 author">
+        <img src="http://www.gravatar.com/avatar/0ab827d396485b42425e5db32283998e" class="img-rounded author-image" />
+        <h4 class="section-title author-name">Chuck Langford</h4>
+        <p class="author-bio">Thoughts from a software dev working with the .NET and MEAN stacks.</p>
+      </section>
+    </div>
+
+    <div class="clearfix"></div>
+
+		<ul class="pager">
+		  
+		  <li class="previous"><a href="/2014/10/01/navigation-timing.html" title="Navigation Timing">&larr; Previous</a></li>
+		  
+		  
+		  <li class="next"><a href="/2014/10/04/BlogTopics.html" title="Blogtopics">Next &rarr;</a></li>
+		  
+		</ul>
+
+		<hr>
+	</div>
+	
+	<div class="col-sm-2 sidebar-2">
+	
+	</div>
+</article>
+<div class="clearfix"></div>
+
+
+
+		<footer>
+			<hr/>
+			<p>
+				&copy; 2014 Chuck Langford with Jekyll. Theme: <a href="https://github.com/dbtek/dbyll">dbyll</a> by dbtek.
+			</p>
+		</footer>
+	</div>
+
+	<script type="text/javascript" src="/assets/resources/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/assets/resources/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/assets/js/app.js"></script>
+</body>
+</html>
+

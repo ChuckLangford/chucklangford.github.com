@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Browser Timing API's</title>
+	<title>Resource Timing</title>
 	
 	<meta name="author" content="Chuck Langford">
 
@@ -146,7 +146,7 @@
 
 	<div class="col-sm-9 col-sm-offset-3">
 		<div class="page-header">
-  <h1>Browser Timing API's </h1>
+  <h1>Resource Timing </h1>
 </div>
 	
 <article>
@@ -154,13 +154,71 @@
 	<div class="col-sm-10">
 	 <span class="post-date">
 	   
-	   September 
-	   22nd,
-	     
+	   October 
+	   20th,
+	   
 	   2014
 	 </span>
 	  <div class="article_body">
-	  
+	  <p>My previous post was all about Navigation Timing.  Continuing with the theme of performance api’s, it’s time to take a look at Resource Timing.</p>
+
+<h3 id="resource-timing-defined">Resource Timing Defined</h3>
+
+<p>First of all, let’s define resource timing in layman’s terms.  Resource timing allows us to measure the performance metrics of each individual resource that a webpage references.  This means we can see how long each image took to download, or how much time it took to get all of our individual javascript and css files.  We can even measure (with varying accuracy) the latency of third party resources.</p>
+
+<p>This level of detail can be put to good use when you’re trying to improve the performance of your website.  We can see the slowest performing resource of a page and focus our efforts on that resource.  We can use this api to reveal resources that we didn’t expect (think an image or font file defined in css).  We could even use it to build a waterfall chart with pure javascript.</p>
+
+<h3 id="getting-started">Getting Started</h3>
+
+<p>There are a couple of things we need to be aware of before we get into the details of what the API offers.  Mainly, how to access it.</p>
+
+<p>The resource api is exposed via the window.performance object.  To actually retrieve the information we want, we have to call the performance object’s getEntriesByType function, making sure to pass  in the type of object we want to retrieve (in this case, ‘resource’):</p>
+
+<pre><code>var resources = window.performance.getEntriesByType('resource');
+</code></pre>
+
+<p>This will return an array of PerformanceResourceTiming objects that hold the timing data we’re after.</p>
+
+<h3 id="the-api">The API</h3>
+
+<p>According to the W3C, the PerformanceResourceTiming interface extends the PeformanceEntry interface, so we get the following four attributes:</p>
+
+<p><strong>name</strong> - This is the url of the resource that was retrieved.  This url will not change from the originally requested url, even if the browser has to redirect to retrieve the resource.</p>
+
+<p><strong>entryType</strong> - Since we’re in the Resource Timing API, all of our retrieved resource will return an entryType == ‘resource’.</p>
+
+<p><strong>startTime</strong> - This returns either the time just before the browser starts to fetch the resource, or, if a redirect was involved, we’ll get the time that the redirect started.</p>
+
+<p><strong>duration</strong> - This is the difference between the responseEnd and startTime values.</p>
+
+<p>The PerformanceResourceTiming interface defines these new values for us to use:</p>
+
+<p><strong>initiatorType</strong> - </p>
+
+<p><strong>redirectStart</strong> - </p>
+
+<p><strong>redirectEnd</strong> - </p>
+
+<p><strong>fetchStart</strong> - </p>
+
+<p><strong>domainLookupStart</strong> - </p>
+
+<p><strong>domainLookupEnd</strong> - </p>
+
+<p><strong>connectStart</strong> - </p>
+
+<p><strong>connectEnd</strong> - </p>
+
+<p><strong>secureConnectionStart</strong> - </p>
+
+<p><strong>requestStart</strong> - </p>
+
+<p><strong>responseStart</strong> - </p>
+
+<p><strong>responseEnd</strong> - </p>
+
+<h3 id="examples">Examples</h3>
+
 
 	  </div>
 
@@ -173,7 +231,7 @@
 		<div>
       <section class="share col-sm-6">
         <h4 class="section-title">Share Post</h4>
-        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Browser Timing API's"
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Resource Timing"
            onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
           <i class="fa fa-twitter fa-lg"></i>
           Twitter
@@ -201,10 +259,10 @@
 
 		<ul class="pager">
 		  
-		  <li class="previous"><a href="/2014/09/22/waiting-for-user-input.html" title="Waiting for User Input">&larr; Previous</a></li>
+		  <li class="previous"><a href="/2014/10/04/BlogTopics.html" title="Blogtopics">&larr; Previous</a></li>
 		  
 		  
-		  <li class="next"><a href="/2014/10/01/navigation-timing.html" title="Navigation Timing">Next &rarr;</a></li>
+			<li class="next disabled"><a>Next &rarr;</a>
 		  
 		</ul>
 
