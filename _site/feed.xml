@@ -29,48 +29,129 @@
 
 &lt;h3 id=&quot;the-api&quot;&gt;The API&lt;/h3&gt;
 
-&lt;p&gt;According to the W3C, the PerformanceResourceTiming interface extends the PeformanceEntry interface, so we get the following four attributes:&lt;/p&gt;
-
 &lt;p&gt;&lt;strong&gt;name&lt;/strong&gt; - This is the url of the resource that was retrieved.  This url will not change from the originally requested url, even if the browser has to redirect to retrieve the resource.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;entryType&lt;/strong&gt; - Since we’re in the Resource Timing API, all of our retrieved resource will return an entryType == ‘resource’.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;entryType&lt;/strong&gt; - Since we’re in the Resource Timing API, all of our retrieved resources will return an entryType == ‘resource’.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;startTime&lt;/strong&gt; - This returns either the time just before the browser starts to fetch the resource, or, if a redirect was involved, we’ll get the time that the redirect started.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;duration&lt;/strong&gt; - This is the difference between the responseEnd and startTime values.&lt;/p&gt;
 
-&lt;p&gt;The PerformanceResourceTiming interface defines these new values for us to use:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;initiatorType&lt;/strong&gt; - The initiatorType is the string representation of the element that caused the resource request.  For instance, an img tag would show up in the Resource Timing API as ‘img’.  However, if the resource is retrieved via CSS using the url() syntax, then the initiator value will be ‘css’.  If the request was initiated via AJAX, the type will be ‘xmlhttprequest’.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;initiatorType&lt;/strong&gt; - &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;redirectStart&lt;/strong&gt; - If a resource is requested and the browser is redirected to another url on the same domain, redirectStart returns the time when the browser starts to request the redirected url.  If we get redirected to a url on a different domain, then we have two scenarios.  We’ll either get the redirect start time as described before, or we’ll get a zero.  It all depends on what the W3C spec calls the “timing allow check algorithm.”&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;redirectStart&lt;/strong&gt; - &lt;/p&gt;
+&lt;p&gt;The algorithm is really nothing more than the value of the Timing-Allow-Origin HTTP response header.  Here’s how the algorithm works; quoted from &lt;a href=&quot;http://www.w3.org/TR/resource-timing/#timing-allow-check&quot;&gt;the spec&lt;/a&gt;:&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;redirectEnd&lt;/strong&gt; - &lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;The timing allow check algorithm, which checks whether a cross-origin resource’s timing information can be shared with the current document, is as follows:&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;fetchStart&lt;/strong&gt; - &lt;/p&gt;
+  &lt;ol&gt;
+    &lt;li&gt;
+      &lt;p&gt;If the HTTP response includes zero or more than one Timing-Allow-Origin header values, return fail and terminate this algorithm.&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;p&gt;If the Timing-Allow-Origin header value is the test “*” character, return pass and terminate this algorithm.&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;p&gt;If the value of Timing-Allow-Origin is not a case-sensitive match for the value of the origin of the current document, return fail and terminate this algorithm.&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;p&gt;Return pass.&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/blockquote&gt;
 
-&lt;p&gt;&lt;strong&gt;domainLookupStart&lt;/strong&gt; - &lt;/p&gt;
+&lt;p&gt;When we’re interacting with a domain that is not ours, redirectStart (as well as several other attributes) will return a value only if that third party website has configured itself to be Resource Timing friendly.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;domainLookupEnd&lt;/strong&gt; - &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;redirectEnd&lt;/strong&gt; - Returns the time after receiving the last byte of the response of the last redirect.  This attribute also depends on the Timing-Allow-Origin header when dealing with third party domains so you’ll get a zero if the third party site isn’t configured properly.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;connectStart&lt;/strong&gt; - &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;fetchStart&lt;/strong&gt; - If there are no redirects, this is the time before the browser starts to fetch the resource.  If there are redirects, this is the time before the browser starts to fetch the final redirected resource.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;connectEnd&lt;/strong&gt; - &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;domainLookupStart&lt;/strong&gt; - This is the time just before the browser performs a DNS lookup on the resource.  If the browser is using a persistent connection or has the resource in cache, then this value will be equal to the fetchStart value.  Again, if the resource is on a third party domain and that domain isn’t configured properly, you’ll get a zero.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;secureConnectionStart&lt;/strong&gt; - &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;domainLookupEnd&lt;/strong&gt; - Pretty much what you might expect, this is the time immediately after the DNS lookup.  Unless, of course, the connection is persistent or the resource is in cache, then this is just the fetchStart time again.  The same “third party website configuration” rules apply to this attribute as well. &lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;requestStart&lt;/strong&gt; - &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;connectStart&lt;/strong&gt; - This is the time after the DNS lookup is complete and just before the connection is started.  If the connection is persistent or the resource is cached, then this will be equal to domainLookupEnd.  Like most of the other attributes, the third party website configuration rules all apply. &lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;responseStart&lt;/strong&gt; - &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;connectEnd&lt;/strong&gt; - This represents the time just after establishing a connection.  This will be equal to domainLookupEnd if we’re running a persistent connection or using cache; also, third party website configuration applies.  It’s worth noting that connectEnd includes the time to establish SSL connections.   &lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;responseEnd&lt;/strong&gt; - &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;secureConnectionStart&lt;/strong&gt; - This one is interesting because it’s optional for browsers to implement.  If a browser doesn’t support this, the value will be undefined.  If the site isn’t using https, the value will be zero, otherwise, this is the time just before the browser starts the handshake process.  &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;requestStart&lt;/strong&gt; - Now that the browser has done all the necessary lookups, it can finally request the resource.  This attribute is the time value just before the request.  Third party website configuration rules apply. &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;responseStart&lt;/strong&gt; - This is the time just after the browser receives the first byte of the resource.  Third party configuration rules apply.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;responseEnd&lt;/strong&gt; - This is the time just after the browser receives the last byte of the resource.&lt;/p&gt;
+
+&lt;p&gt;In addition to these attributes, there are two functions and an event we need to be aware of when using resource timing:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;clearResourceTimings()&lt;/strong&gt; - clears the current PerformanceResourceTiming values.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;setResourceTimingBufferSize()&lt;/strong&gt; - sets the maximum PerformanceResourceTiming values that the browser should store.  Defaults to 150.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;onresourcetimingbufferfull&lt;/strong&gt; - this fires immediately after the browser’s buffer is full.&lt;/p&gt;
 
 &lt;h3 id=&quot;examples&quot;&gt;Examples&lt;/h3&gt;
 
+&lt;p&gt;So we’ve finally made it to the fun part.  I’m going to take code from a Github &lt;a href=&quot;https://github.com/AloisReitbauer/w3cinpractice&quot;&gt;repo&lt;/a&gt; by Alois Reitbauer (one of the Performance group members).&lt;/p&gt;
+
+&lt;p&gt;Here’s a straight forward example on how to just log out the load time of all the images on a page:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var resourceList = window.performance.getEntriesByType(&quot;resource&quot;);
+for (i = 0; i &amp;lt; resourceList.length; i++){
+  if (resourceList[i].initiatorType == &quot;img&quot;) {
+    console.log(&#39;Load time is &#39; + (resourceList[i].responseEnd - resourceList[i].startTime + &#39; ms&#39;));
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This example showcases a pretty creative use of the api.  It allows us to detect which resources (in this case images) never actually loaded.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// find all images in the DOM
+var elems= document.getElementsByTagName(&#39;img&#39;);
+var definedImages = new Array();
+for (i = 0; i &amp;lt; elems.length; i++) {
+    definedImages[definedImages.length] = &quot;http://localhost:3000/&quot; + elems[0].getAttribute(&#39;src&#39;);
+}
+
+// find all images that were loaded
+var loadedImages = new Array ();
+var resourceList = window.performance.getEntriesByType(&quot;resource&quot;);
+for (i = 0; i &amp;lt; resourceList.length; i++){
+    if (resourceList[i].initiatorType == &quot;img&quot;) {
+        loadedImages[loadedImages.length]= resourceList[i].name;
+    }
+}
+
+// check the difference
+for (i = 0; i &amp;lt; definedImages.length; i++){
+    if(loadedImages.indexOf(definedImages[i]) &amp;lt; 0){
+      console.log(&#39;Image &#39; + definedImages[i] + &#39; failed to load&#39;);
+    } else {
+      console.log(&#39;Image &#39; + definedImages[i] + &#39; loaded successfully&#39;);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, here’s an example that displays our top ten heaviest page resources:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var topX = 0;
+var resourceList = window.performance.getEntriesByType(&quot;resource&quot;);
+resourceList.sort (function (a,b){return (a.duration - b.duration) * -1});
+for (i = 0; i &amp;lt; resourceList.length &amp;amp;&amp;amp; topX &amp;lt; 10 ; i++){
+    if (resourceList[i].initiatorType == &quot;img&quot;) {
+        ++topX;
+        console.log(&#39;Load time &#39; + resourceList[i].name  +  &#39; is &#39; + ((resourceList[i].duration).toFixed(2) + &#39; ms&#39;));
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;These are just a few examples of the resource api.  Checkout Alois’ repo for more.&lt;/p&gt;
 </description>
-				<pubDate>Mon, 20 Oct 2014 23:24:01 -0400</pubDate>
-				<link>/2014/10/20/resource-timing.html</link>
-				<guid isPermaLink="true">/2014/10/20/resource-timing.html</guid>
+				<pubDate>Thu, 23 Oct 2014 00:00:14 -0400</pubDate>
+				<link>/2014/10/23/resource-timing.html</link>
+				<guid isPermaLink="true">/2014/10/23/resource-timing.html</guid>
 			</item>
 		
 			<item>
