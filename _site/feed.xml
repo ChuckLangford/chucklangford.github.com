@@ -147,7 +147,7 @@ for (i = 0; i &amp;lt; resourceList.length &amp;amp;&amp;amp; topX &amp;lt; 10 ;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;These are just a few examples of the resource api.  Checkout Alois’ repo for more.&lt;/p&gt;
+&lt;p&gt;These are just a few examples of the resource api.  Checkout Alois’ &lt;a href=&quot;https://github.com/AloisReitbauer/w3cinpractice&quot;&gt;repo&lt;/a&gt; for more.&lt;/p&gt;
 </description>
 				<pubDate>Thu, 23 Oct 2014 00:00:00 -0400</pubDate>
 				<link>/2014/10/23/resource-timing.html</link>

@@ -129,4 +129,4 @@ Finally, here's an example that displays our top ten heaviest page resources:
         }
     }
 
-These are just a few examples of the resource api.  Checkout Alois' repo for more.
+These are just a few examples of the resource api.  Checkout Alois' [repo](https://github.com/AloisReitbauer/w3cinpractice) for more.
