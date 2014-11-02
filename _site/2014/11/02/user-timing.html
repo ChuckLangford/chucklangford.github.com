@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Quickstart Jekyll Guide</title>
+	<title>User Timing</title>
 	
 	<meta name="author" content="Chuck Langford">
 
@@ -146,7 +146,7 @@
 
 	<div class="col-sm-9 col-sm-offset-3">
 		<div class="page-header">
-  <h1>Quickstart Jekyll Guide </h1>
+  <h1>User Timing </h1>
 </div>
 	
 <article>
@@ -154,54 +154,102 @@
 	<div class="col-sm-10">
 	 <span class="post-date">
 	   
-	   September 
+	   November 
 	   2nd,
 	     
 	   2014
 	 </span>
 	  <div class="article_body">
-	  <p>When I finally made the decision to start blogging I had to find a place to host that blog.  I’m a fan of keeping like things in a central location so a blog about development lives in the same place I work, Github.  A quick Google revealed Jekyll as the primary blogging platform that works with Github so I downloaded it.</p>
+	  <p>After reviewing both the Navigation and Resource timing specifications, we’ve finally arrived at the User timing spec.  This is the last of the performance timing specifications I’ll review, and thankfully, one of the most straightforward.</p>
 
-<p>Unfortunately, being completely ignorant of all things Ruby/Gem made getting this blog off the ground a little more tedious than it should have been; at least that’s what I originally thought.  Turns out, I just confused myself.  Setting up a Jekyll blog is actually quite simple.  Jekyll comes with excellent documentation and there are a few guides available on the net that can be invaluable.  With that in mind, I’m just going to share a few points that stumped me and give you a few required links.</p>
+<h3 id="user-timing-in-a-nutshell">User Timing in a Nutshell</h3>
 
-<h3 id="but-first-the-quickstart-guide">But First, the Quickstart Guide</h3>
+<p>The User Timing api allows you to measure the performance of your javascript.  Quite simply, it allows you to specify a start time at any point in your code, an end point at any point in your code, and then measure the difference between the two.</p>
 
-<ol>
-  <li>Follow <a href="http://jekyllrb.com/docs/quickstart/">these instructions</a> to install and test locally (note: on my OSX, I had to run “sudo gem install jekyll”).</li>
-  <li>At this point, you could literally edit your files the way you see fit and then check your new blog into the master branch of your Github <a href="https://pages.github.com/">personal page</a>.</li>
-</ol>
+<h3 id="i-can-already-do-that-with-datenow">“I Can Already Do That With Date.now()”</h3>
 
-<h3 id="just-check-in-everything">Just Check in Everything</h3>
+<p>Yes you can.  So why do we need an api for something we can already do?  The spec tells us: “…the precision of this timestamp varies between user agents.”  To put it another way, the browsers are too inconsistent in how they report Date.now().</p>
 
-<p>Jekyll has a great system that allows you to build your static files and then serve them locally to review your work before publishing.  The documentation explains in great detail all about the directory structure and tells you where the compiled site is generated (the _site folder).  So when I read this I wondered, “So what do I actually push up to Github?”</p>
+<h3 id="marks">Marks</h3>
 
-<p>Everything.  Plain and simple.</p>
+<p>Before getting into the details, it’s important to understand that all time measurements created with the User Timing api are relative to the navigation start time of the page.  In other words, when you navigate to the page, the timer starts at 0 and works it way up.</p>
 
-<p>Github understands a Jekyll blog so it knows what to look for and what to build and what to display.  It just works.</p>
+<p>To record a start or end time, you use the mark method;</p>
 
-<h3 id="templates">Templates</h3>
+<pre><code>performance.mark("startTime1");
+yourCode();
+performance.mark("endTime1");
+</code></pre>
 
-<p>If you like the default look of the Jekyll blog then you’re all set, skip to the next section.  However if you want something a little different then read on.</p>
+<p>The only things you need to know when creating a mark are 1) You can’t use a reserved word and 2) You can reuse the same name; the value will just be overwritten each time.</p>
 
-<p>Templates are available everywhere.  Google Jekyll templates and pick one you like.  I picked one and I’m pleased with it but once again I had another question that wasn’t immediately obvious, “How do I install the new template?”  Once again, the answer was simple:</p>
+<p>In order to access the values of a mark you created, request the marks from the performance object:</p>
 
-<p>Just copy and paste the files, then use Jekyll to rebuild your static site.</p>
+<pre><code>var perfEntries = performance.getEntriesByType("mark");
+for (var i = 0; i &lt; perfEntries.length; i++) {
+  if (window.console) console.log("Name: "        + perfEntries[i].name      + 
+                                  " Entry Type: " + perfEntries[i].entryType +
+                                  " Start Time: " + perfEntries[i].startTime + 
+                                  " Duration: "   + perfEntries[i].duration  + "\n");
+}
+</code></pre>
 
-<p>If you already have posts/drafts, all you need to do is back them up before you copy over everything.  No big deal.</p>
+<p><strong>name</strong> - This is the name you gave the mark.</p>
 
-<h3 id="static-pages">Static Pages</h3>
+<p><strong>entryType</strong> - This will be “mark”.</p>
 
-<p>Finally, I wanted a resume page to exist on my blog.  Jekyll allows you to create static html pages but either it’s not documented or I missed the fact that you can generate a page using markdown that is not a part of the blog.  So here’s my setup.</p>
+<p><strong>startTime</strong> - This is the time value that was recorded when your mark function ran.</p>
 
-<p>In the root of my Jekyll site I created a resume folder.  Inside of that folder, I created index.md and edited that file as my resume.  When Jekyll builds, it generates {site}/resume/index.html.  Which means my resume is addressable as {site}/resume.  Nice.</p>
+<p><strong>duration</strong> - For a mark, this will return a 0.</p>
 
-<h3 id="useful-links">Useful Links</h3>
+<h3 id="measures">Measures</h3>
 
-<p>Here’s a great article from Smashing Magazine - <a href="http://www.smashingmagazine.com/2014/08/01/build-blog-jekyll-github-pages/">Build A Blog With Jekyll And GitHub Pages</a> <br />
-The Jekyll site itself - <a href="http://jekyllrb.com/">http://jekyllrb.com/</a> <br />
-Jekyll’s info about Github Pages - <a href="http://jekyllrb.com/docs/github-pages/">http://jekyllrb.com/docs/github-pages/</a></p>
+<p>The measure function is a convenience method that finds the difference between two marks and stores it in a named measure.</p>
 
-<p>Happy Coding.</p>
+<pre><code>performance.measure('myNewMeasure', 'markOneStart', 'markOneEnd');
+</code></pre>
+
+<p>Retrieving measure values is done exactly the same way as marks except you specify “measure” as the type to retrieve:</p>
+
+<pre><code>var perfEntries = performance.getEntriesByType("measure");
+</code></pre>
+
+<p><strong>name</strong> - This is the name you have assigned to the measure.</p>
+
+<p><strong>entryType</strong> - This will be “measure”.</p>
+
+<p><strong>startTime</strong> - This is the time the measure was taken.</p>
+
+<p><strong>duration</strong> - This is the calculated duration of the measure.</p>
+
+<p>The measure function also has two other modes of operation you need to be aware.  First, if you only specify a measure name, then the reported duration will be the difference between the navigation start and the current time.</p>
+
+<p>Second, if you only specify a measure name and a start mark name, then the reported duration will be the difference between the start mark and the current time.</p>
+
+<h3 id="methods-to-be-aware-of">Methods to be Aware Of</h3>
+
+<p><strong>clearMarks</strong> - If you call this method with no name, you’ll clear all the marks on the page.  If you specify a mark name, it will clear all the marks with that name.  If you specify a mark name that doesn’t exist, then this function does nothing.</p>
+
+<p><strong>clearMeasures</strong> - This behaves in all the same ways as the clearMarks function except it applies to your measures.</p>
+
+<h3 id="example">Example</h3>
+
+<p>Here’s an example of how you might use this code in an external javascript file.  Once again, I’m relying heavily on a <a href="https://github.com/AloisReitbauer/w3cinpractice">repo</a> from Alois Reitbauer.</p>
+
+<pre><code>var scriptSource = 'myScriptName'; 
+
+performance.mark(scriptSource + 'Start');
+
+var delay= 5 * 1000 // 10 seconds
+var quitAt = Date.now() + delay;
+while (Date.now() &lt;= quitAt){
+  ; // good old busy waiting - doing nothing
+}
+
+performance.measure(scriptSource, scriptSource + 'Start');
+</code></pre>
+
+<p>With this in your javascript file, you query the measure types to find the duration of your scripts. </p>
 
 	  </div>
 
@@ -214,7 +262,7 @@ Jekyll’s info about Github Pages - <a href="http://jekyllrb.com/docs/github-pa
 		<div>
       <section class="share col-sm-6">
         <h4 class="section-title">Share Post</h4>
-        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Quickstart Jekyll Guide"
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=User Timing"
            onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
           <i class="fa fa-twitter fa-lg"></i>
           Twitter
@@ -242,10 +290,10 @@ Jekyll’s info about Github Pages - <a href="http://jekyllrb.com/docs/github-pa
 
 		<ul class="pager">
 		  
-		  <li class="previous"><a href="/2014/09/01/draft1.html" title="What's This all About?">&larr; Previous</a></li>
+		  <li class="previous"><a href="/2014/10/23/resource-timing.html" title="Resource Timing">&larr; Previous</a></li>
 		  
 		  
-		  <li class="next"><a href="/2014/09/02/using_jekyll.html" title="Quickstart Jekyll Guide">Next &rarr;</a></li>
+			<li class="next disabled"><a>Next &rarr;</a>
 		  
 		</ul>
 

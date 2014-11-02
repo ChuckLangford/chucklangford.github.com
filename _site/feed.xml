@@ -7,6 +7,252 @@
 		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>User Timing</title>
+				<description>&lt;p&gt;After reviewing both the Navigation and Resource timing specifications, we’ve finally arrived at the User timing spec.  This is the last of the performance timing specifications I’ll review, and thankfully, one of the most straightforward.&lt;/p&gt;
+
+&lt;h3 id=&quot;user-timing-in-a-nutshell&quot;&gt;User Timing in a Nutshell&lt;/h3&gt;
+
+&lt;p&gt;The User Timing api allows you to measure the performance of your javascript.  Quite simply, it allows you to specify a start time at any point in your code, an end point at any point in your code, and then measure the difference between the two.&lt;/p&gt;
+
+&lt;h3 id=&quot;i-can-already-do-that-with-datenow&quot;&gt;“I Can Already Do That With Date.now()”&lt;/h3&gt;
+
+&lt;p&gt;Yes you can.  So why do we need an api for something we can already do?  The spec tells us: “…the precision of this timestamp varies between user agents.”  To put it another way, the browsers are too inconsistent in how they report Date.now().&lt;/p&gt;
+
+&lt;h3 id=&quot;marks&quot;&gt;Marks&lt;/h3&gt;
+
+&lt;p&gt;Before getting into the details, it’s important to understand that all time measurements created with the User Timing api are relative to the navigation start time of the page.  In other words, when you navigate to the page, the timer starts at 0 and works it way up.&lt;/p&gt;
+
+&lt;p&gt;To record a start or end time, you use the mark method;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;performance.mark(&quot;startTime1&quot;);
+yourCode();
+performance.mark(&quot;endTime1&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The only things you need to know when creating a mark are 1) You can’t use a reserved word and 2) You can reuse the same name; the value will just be overwritten each time.&lt;/p&gt;
+
+&lt;p&gt;In order to access the values of a mark you created, request the marks from the performance object:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var perfEntries = performance.getEntriesByType(&quot;mark&quot;);
+for (var i = 0; i &amp;lt; perfEntries.length; i++) {
+  if (window.console) console.log(&quot;Name: &quot;        + perfEntries[i].name      + 
+                                  &quot; Entry Type: &quot; + perfEntries[i].entryType +
+                                  &quot; Start Time: &quot; + perfEntries[i].startTime + 
+                                  &quot; Duration: &quot;   + perfEntries[i].duration  + &quot;\n&quot;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;name&lt;/strong&gt; - This is the name you gave the mark.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;entryType&lt;/strong&gt; - This will be “mark”.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;startTime&lt;/strong&gt; - This is the time value that was recorded when your mark function ran.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;duration&lt;/strong&gt; - For a mark, this will return a 0.&lt;/p&gt;
+
+&lt;h3 id=&quot;measures&quot;&gt;Measures&lt;/h3&gt;
+
+&lt;p&gt;The measure function is a convenience method that finds the difference between two marks and stores it in a named measure.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;performance.measure(&#39;myNewMeasure&#39;, &#39;markOneStart&#39;, &#39;markOneEnd&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Retrieving measure values is done exactly the same way as marks except you specify “measure” as the type to retrieve:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var perfEntries = performance.getEntriesByType(&quot;measure&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;name&lt;/strong&gt; - This is the name you have assigned to the measure.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;entryType&lt;/strong&gt; - This will be “measure”.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;startTime&lt;/strong&gt; - This is the time the measure was taken.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;duration&lt;/strong&gt; - This is the calculated duration of the measure.&lt;/p&gt;
+
+&lt;p&gt;The measure function also has two other modes of operation you need to be aware.  First, if you only specify a measure name, then the reported duration will be the difference between the navigation start and the current time.&lt;/p&gt;
+
+&lt;p&gt;Second, if you only specify a measure name and a start mark name, then the reported duration will be the difference between the start mark and the current time.&lt;/p&gt;
+
+&lt;h3 id=&quot;methods-to-be-aware-of&quot;&gt;Methods to be Aware Of&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;clearMarks&lt;/strong&gt; - If you call this method with no name, you’ll clear all the marks on the page.  If you specify a mark name, it will clear all the marks with that name.  If you specify a mark name that doesn’t exist, then this function does nothing.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;clearMeasures&lt;/strong&gt; - This behaves in all the same ways as the clearMarks function except it applies to your measures.&lt;/p&gt;
+
+&lt;h3 id=&quot;example&quot;&gt;Example&lt;/h3&gt;
+
+&lt;p&gt;Here’s an example of how you might use this code in an external javascript file.  Once again, I’m relying heavily on a &lt;a href=&quot;https://github.com/AloisReitbauer/w3cinpractice&quot;&gt;repo&lt;/a&gt; from Alois Reitbauer.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var scriptSource = &#39;myScriptName&#39;; 
+
+performance.mark(scriptSource + &#39;Start&#39;);
+
+var delay= 5 * 1000 // 10 seconds
+var quitAt = Date.now() + delay;
+while (Date.now() &amp;lt;= quitAt){
+  ; // good old busy waiting - doing nothing
+}
+
+performance.measure(scriptSource, scriptSource + &#39;Start&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With this in your javascript file, you query the measure types to find the duration of your scripts. &lt;/p&gt;
+</description>
+				<pubDate>Sun, 02 Nov 2014 16:46:35 -0500</pubDate>
+				<link>/2014/11/02/user-timing.html</link>
+				<guid isPermaLink="true">/2014/11/02/user-timing.html</guid>
+			</item>
+		
+			<item>
+				<title>Resource Timing</title>
+				<description>&lt;p&gt;My previous post was all about Navigation Timing.  Continuing with the theme of performance api’s, it’s time to take a look at Resource Timing.&lt;/p&gt;
+
+&lt;h3 id=&quot;resource-timing-defined&quot;&gt;Resource Timing Defined&lt;/h3&gt;
+
+&lt;p&gt;First of all, let’s define resource timing in layman’s terms.  Resource timing allows us to measure the performance metrics of each individual resource that a webpage references.  This means we can see how long each image took to download, or how much time it took to get all of our individual javascript and css files.  We can even measure (with varying accuracy) the latency of third party resources.&lt;/p&gt;
+
+&lt;p&gt;This level of detail can be put to good use when you’re trying to improve the performance of your website.  We can see the slowest performing resource of a page and focus our efforts on that resource.  We can use this api to reveal resources that we didn’t expect (think an image or font file defined in css).  We could even use it to build a waterfall chart with pure javascript.&lt;/p&gt;
+
+&lt;h3 id=&quot;getting-started&quot;&gt;Getting Started&lt;/h3&gt;
+
+&lt;p&gt;There are a couple of things we need to be aware of before we get into the details of what the API offers.  Mainly, how to access it.&lt;/p&gt;
+
+&lt;p&gt;The resource api is exposed via the window.performance object.  To actually retrieve the information we want, we have to call the performance object’s getEntriesByType function, making sure to pass  in the type of object we want to retrieve (in this case, ‘resource’):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var resources = window.performance.getEntriesByType(&#39;resource&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will return an array of PerformanceResourceTiming objects that hold the timing data we’re after.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-api&quot;&gt;The API&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;name&lt;/strong&gt; - This is the url of the resource that was retrieved.  This url will not change from the originally requested url, even if the browser has to redirect to retrieve the resource.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;entryType&lt;/strong&gt; - Since we’re in the Resource Timing API, all of our retrieved resources will return an entryType == ‘resource’.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;startTime&lt;/strong&gt; - This returns either the time just before the browser starts to fetch the resource, or, if a redirect was involved, we’ll get the time that the redirect started.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;duration&lt;/strong&gt; - This is the difference between the responseEnd and startTime values.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;initiatorType&lt;/strong&gt; - The initiatorType is the string representation of the element that caused the resource request.  For instance, an img tag would show up in the Resource Timing API as ‘img’.  However, if the resource is retrieved via CSS using the url() syntax, then the initiator value will be ‘css’.  If the request was initiated via AJAX, the type will be ‘xmlhttprequest’.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;redirectStart&lt;/strong&gt; - If a resource is requested and the browser is redirected to another url on the same domain, redirectStart returns the time when the browser starts to request the redirected url.  If we get redirected to a url on a different domain, then we have two scenarios.  We’ll either get the redirect start time as described before, or we’ll get a zero.  It all depends on what the W3C spec calls the “timing allow check algorithm.”&lt;/p&gt;
+
+&lt;p&gt;The algorithm is really nothing more than the value of the Timing-Allow-Origin HTTP response header.  Here’s how the algorithm works; quoted from &lt;a href=&quot;http://www.w3.org/TR/resource-timing/#timing-allow-check&quot;&gt;the spec&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The timing allow check algorithm, which checks whether a cross-origin resource’s timing information can be shared with the current document, is as follows:&lt;/p&gt;
+
+  &lt;ol&gt;
+    &lt;li&gt;
+      &lt;p&gt;If the HTTP response includes zero or more than one Timing-Allow-Origin header values, return fail and terminate this algorithm.&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;p&gt;If the Timing-Allow-Origin header value is the test “*” character, return pass and terminate this algorithm.&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;p&gt;If the value of Timing-Allow-Origin is not a case-sensitive match for the value of the origin of the current document, return fail and terminate this algorithm.&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;p&gt;Return pass.&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;When we’re interacting with a domain that is not ours, redirectStart (as well as several other attributes) will return a value only if that third party website has configured itself to be Resource Timing friendly.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;redirectEnd&lt;/strong&gt; - Returns the time after receiving the last byte of the response of the last redirect.  This attribute also depends on the Timing-Allow-Origin header when dealing with third party domains so you’ll get a zero if the third party site isn’t configured properly.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;fetchStart&lt;/strong&gt; - If there are no redirects, this is the time before the browser starts to fetch the resource.  If there are redirects, this is the time before the browser starts to fetch the final redirected resource.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;domainLookupStart&lt;/strong&gt; - This is the time just before the browser performs a DNS lookup on the resource.  If the browser is using a persistent connection or has the resource in cache, then this value will be equal to the fetchStart value.  Again, if the resource is on a third party domain and that domain isn’t configured properly, you’ll get a zero.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;domainLookupEnd&lt;/strong&gt; - Pretty much what you might expect, this is the time immediately after the DNS lookup.  Unless, of course, the connection is persistent or the resource is in cache, then this is just the fetchStart time again.  The same “third party website configuration” rules apply to this attribute as well. &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;connectStart&lt;/strong&gt; - This is the time after the DNS lookup is complete and just before the connection is started.  If the connection is persistent or the resource is cached, then this will be equal to domainLookupEnd.  Like most of the other attributes, the third party website configuration rules all apply. &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;connectEnd&lt;/strong&gt; - This represents the time just after establishing a connection.  This will be equal to domainLookupEnd if we’re running a persistent connection or using cache; also, third party website configuration applies.  It’s worth noting that connectEnd includes the time to establish SSL connections.   &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;secureConnectionStart&lt;/strong&gt; - This one is interesting because it’s optional for browsers to implement.  If a browser doesn’t support this, the value will be undefined.  If the site isn’t using https, the value will be zero, otherwise, this is the time just before the browser starts the handshake process.  &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;requestStart&lt;/strong&gt; - Now that the browser has done all the necessary lookups, it can finally request the resource.  This attribute is the time value just before the request.  Third party website configuration rules apply. &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;responseStart&lt;/strong&gt; - This is the time just after the browser receives the first byte of the resource.  Third party configuration rules apply.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;responseEnd&lt;/strong&gt; - This is the time just after the browser receives the last byte of the resource.&lt;/p&gt;
+
+&lt;p&gt;In addition to these attributes, there are two functions and an event we need to be aware of when using resource timing:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;clearResourceTimings()&lt;/strong&gt; - clears the current PerformanceResourceTiming values.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;setResourceTimingBufferSize()&lt;/strong&gt; - sets the maximum PerformanceResourceTiming values that the browser should store.  Defaults to 150.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;onresourcetimingbufferfull&lt;/strong&gt; - this fires immediately after the browser’s buffer is full.&lt;/p&gt;
+
+&lt;h3 id=&quot;examples&quot;&gt;Examples&lt;/h3&gt;
+
+&lt;p&gt;So we’ve finally made it to the fun part.  I’m going to take code from a Github &lt;a href=&quot;https://github.com/AloisReitbauer/w3cinpractice&quot;&gt;repo&lt;/a&gt; by Alois Reitbauer (one of the Performance group members).&lt;/p&gt;
+
+&lt;p&gt;Here’s a straight forward example on how to just log out the load time of all the images on a page:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var resourceList = window.performance.getEntriesByType(&quot;resource&quot;);
+for (i = 0; i &amp;lt; resourceList.length; i++){
+  if (resourceList[i].initiatorType == &quot;img&quot;) {
+    console.log(&#39;Load time is &#39; + (resourceList[i].responseEnd - resourceList[i].startTime + &#39; ms&#39;));
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This example showcases a pretty creative use of the api.  It allows us to detect which resources (in this case images) never actually loaded.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// find all images in the DOM
+var elems= document.getElementsByTagName(&#39;img&#39;);
+var definedImages = new Array();
+for (i = 0; i &amp;lt; elems.length; i++) {
+    definedImages[definedImages.length] = &quot;http://localhost:3000/&quot; + elems[0].getAttribute(&#39;src&#39;);
+}
+
+// find all images that were loaded
+var loadedImages = new Array ();
+var resourceList = window.performance.getEntriesByType(&quot;resource&quot;);
+for (i = 0; i &amp;lt; resourceList.length; i++){
+    if (resourceList[i].initiatorType == &quot;img&quot;) {
+        loadedImages[loadedImages.length]= resourceList[i].name;
+    }
+}
+
+// check the difference
+for (i = 0; i &amp;lt; definedImages.length; i++){
+    if(loadedImages.indexOf(definedImages[i]) &amp;lt; 0){
+      console.log(&#39;Image &#39; + definedImages[i] + &#39; failed to load&#39;);
+    } else {
+      console.log(&#39;Image &#39; + definedImages[i] + &#39; loaded successfully&#39;);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, here’s an example that displays our top ten heaviest page resources:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var topX = 0;
+var resourceList = window.performance.getEntriesByType(&quot;resource&quot;);
+resourceList.sort (function (a,b){return (a.duration - b.duration) * -1});
+for (i = 0; i &amp;lt; resourceList.length &amp;amp;&amp;amp; topX &amp;lt; 10 ; i++){
+    if (resourceList[i].initiatorType == &quot;img&quot;) {
+        ++topX;
+        console.log(&#39;Load time &#39; + resourceList[i].name  +  &#39; is &#39; + ((resourceList[i].duration).toFixed(2) + &#39; ms&#39;));
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;These are just a few examples of the resource api.  Checkout Alois’ repo for more.&lt;/p&gt;
+</description>
+				<pubDate>Thu, 23 Oct 2014 00:00:14 -0400</pubDate>
+				<link>/2014/10/23/resource-timing.html</link>
+				<guid isPermaLink="true">/2014/10/23/resource-timing.html</guid>
+			</item>
+		
+			<item>
 				<title>Resource Timing</title>
 				<description>&lt;p&gt;My previous post was all about Navigation Timing.  Continuing with the theme of performance api’s, it’s time to take a look at Resource Timing.&lt;/p&gt;
 
@@ -155,6 +401,117 @@ for (i = 0; i &amp;lt; resourceList.length &amp;amp;&amp;amp; topX &amp;lt; 10 ;
 			</item>
 		
 			<item>
+				<title>Blogtopics</title>
+				<description>&lt;ul&gt;
+  &lt;li&gt;Impact of page speed on business&lt;/li&gt;
+  &lt;li&gt;List of tools mentioned in Velocity NY 2014&lt;/li&gt;
+  &lt;li&gt;List of talks and slides from Velocity NY 2014&lt;/li&gt;
+  &lt;li&gt;Implementing a third party script SLA&lt;/li&gt;
+  &lt;li&gt;Waterfalls 101&lt;/li&gt;
+  &lt;li&gt;Discovering the performance poverty line&lt;/li&gt;
+  &lt;li&gt;Creating a strategy for continual performance improvements and experimentation&lt;/li&gt;
+  &lt;li&gt;Why to roll your own webpagetest.org&lt;/li&gt;
+  &lt;li&gt;Bucketing your users with performance data&lt;/li&gt;
+  &lt;li&gt;Joining a W3C group and contributing&lt;/li&gt;
+  &lt;li&gt;The W3C Beacon spec&lt;/li&gt;
+  &lt;li&gt;Design and how it affects our api endpoints&lt;/li&gt;
+  &lt;li&gt;Measuring performance above the fold&lt;/li&gt;
+  &lt;li&gt;Review of the best image type to use&lt;/li&gt;
+  &lt;li&gt;All about the browser preloader&lt;/li&gt;
+  &lt;li&gt;On Experimentation&lt;/li&gt;
+  &lt;li&gt;Monitoring third party scripts&lt;/li&gt;
+  &lt;li&gt;A Quick and Easy way to Measure Performance: WebPageTest.org&lt;/li&gt;
+  &lt;li&gt;Even the big sites have issues&lt;/li&gt;
+  &lt;li&gt;Using Google BigQuery and HttpArchive to Answer Questions&lt;/li&gt;
+  &lt;li&gt;Creating a strategy for SPOF and Practicing that strategy&lt;/li&gt;
+  &lt;li&gt;Don’t forget the basics&lt;/li&gt;
+  &lt;li&gt;Relating performance to value&lt;/li&gt;
+  &lt;li&gt;The importance of page speed on user perception&lt;/li&gt;
+  &lt;li&gt;Tags&lt;/li&gt;
+  &lt;li&gt;The new html parser: pup&lt;/li&gt;
+  &lt;li&gt;Manually auditing site performance&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+				<pubDate>Sat, 04 Oct 2014 09:36:59 -0400</pubDate>
+				<link>/2014/10/04/BlogTopics.html</link>
+				<guid isPermaLink="true">/2014/10/04/BlogTopics.html</guid>
+			</item>
+		
+			<item>
+				<title>Navigation Timing</title>
+				<description>&lt;p&gt;I was fortunate enough to be able to attend the Velocity conference in New York and I have to say, I’m pretty pumped about what I’ve learned.  There’s actually so much to share that it’ll take a little time to get through so today I thought I’d start with the timing api’s.&lt;/p&gt;
+
+&lt;h3 id=&quot;what-are-the-timing-apis&quot;&gt;What are the Timing API’s?&lt;/h3&gt;
+
+&lt;p&gt;Long story short, the api’s allow us to measure real web page timing metrics using javascript.  This is awesome because we can report on exactly what kind of experience our users are actually having when they visit our sites.&lt;/p&gt;
+
+&lt;p&gt;There are three separate api’s that are available: Navigation, Resource, and User.  We’ll go over Navigation Timing in this post.&lt;/p&gt;
+
+&lt;h3 id=&quot;navigation-timing&quot;&gt;Navigation Timing&lt;/h3&gt;
+
+&lt;p&gt;Navigation timing is where you should start your performance measurements; it tells us how long our pages take to load.  In fact, it goes into incredible detail about each step the browser is taking to retrieve a web page.  Here’s a quick rundown of the information that the api provides.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;navigationStart&lt;/strong&gt; - This attribute returns the time immediately after the page unload event has finished.  Basically, if there was a previous page loaded in the browser and you navigate to a new one, a page unload event occurrs.  navigationStart returns the time immediately after this event.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;unloadEventStart&lt;/strong&gt; - As you leave a web page within a browser, the browser fires an unload event.  The unloadEventStart attribute returns the starting time of the unload event.  You would use this with the next attribute, unloadEventEnd, to measure how long the unload event takes to complete.  This attribute, and it’s sibling, only work if there was a previous document and that document was on the same domain.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;unloadEventEnd&lt;/strong&gt; - This is the end time of the unload event.  unloadEventEnd - unloadEventStart = How long the unload event took.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;redirectStart&lt;/strong&gt; - If one of your pages redirects to another page on the same domain, this attribute gives us the starting time of the document fetch.  Like the previous two attributes, it works best with it’s sibling…&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;redirectEnd&lt;/strong&gt; - There are a lot of Start/End pairs in the api.  redirectEnd - redirectStart = How long it took redirect to another page and receive all the bytes for the new page.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;fetchStart&lt;/strong&gt; - This returns the time before the browser issues an HTTP GET and before it checks it’s local cache.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;domainLookupStart&lt;/strong&gt; - This one is what you expect it to be, the start time of the browser issuing a DNS lookup for a resource, but there is a bit more to understand.  If your browser has a persistent connection to the server or if the resource is found in the local browser cache, then this attribute will return the same value as fetchStart.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;domainLookupEnd&lt;/strong&gt; - Again, this one will either be the end time of looking up the domain or, if the resource is in browser cache, it will return the same value as fetchStart.  There’s also one more interesting piece of info to know, browsers can cache their own DNS records.  So these two attributes, domainLookupStart and domainLookupEnd, can reflect the DNS lookup values from the browser’s cache.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;connectStart&lt;/strong&gt; - After a browser has retrieved the DNS records, it’s very next step is to connect to our web server.  This attribute reflects the starting time of that connection.  If the resource was in the local cache or the browser has a persistent connection, this value is equal to domainLookupEnd.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;connectEnd&lt;/strong&gt; - Hurray we established a connection, here’s how long it took: connectEnd - connectStart.  This attribute is also subject to local cache or persistent connections (so it would equal the same thing as domainLookupEnd).  connectEnd also encompasses the time to establish SSL handshakes.  Finally, if a connection attempt fails before it succeeds, then connectStart and connectEnd will only tell us the time values for the successful connection.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;secureConnectionStart&lt;/strong&gt; - Unfortunately, this one is currently optional for the browsers.  If a browser does implement it, this is the time just before the SSL handshake process.  If a browser doesn’t implement this, it is suppossed to return undefined.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;requestStart&lt;/strong&gt; - This one confused me for a bit.  requestStart is the time value of when the browser requests the page.  At first, it sounds a lot like fetchStart, and for the most part these two values are probably going to be really close.  The difference, however, is that fetchStart happens before cache/DNS lookups and before connections.  requestStart represents the start time after all those previous steps have finished and the browser can confidently ask for the resource from the correct place.  Notice that there is no requestEnd attribute.  From the documentation and various W3C chat’s I found, a requestEnd attribute was both difficult to define and implement.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;responseStart&lt;/strong&gt; - This is the time immediately after the browser has received the first byte from the server/cache/local resource.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;responseEnd&lt;/strong&gt; - This is either the time immediately after receiving the last byte from the server/cache/local resource or it’s the time just before the transport connection is closed, whichever comes first.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;domLoading&lt;/strong&gt; - This is the time just before the browser sets the “current document readiness” state to “loading”.  Honestly, I had no idea what any of that meant so I looked it up.  Here’s the link &lt;a href=&quot;http://www.w3.org/TR/html5/dom.html#current-document-readiness&quot;&gt;http://www.w3.org/TR/html5/dom.html#current-document-readiness&lt;/a&gt;.  Basically, the document object has &lt;a href=&quot;http://www.w3.org/TR/html5/dom.html#the-document-object&quot;&gt;three states&lt;/a&gt;: loading, interactive, and complete (loading while the DOM is still loading, interactive once the DOM is parsed but we’re still waiting on subresources, and complete is all done).  You can see it by going to your browser’s console and typing document.readyState.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;domInteractive&lt;/strong&gt; - If any of my domLoading explanation made sense, then this should be apparent.  This is the time just before the document readiness is set to “interactive”.  It also represents the time after blocking scripts have been executed (inline scripts or src scripts that didn’t use defer or asynch).&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;domContentLoadedEventStart&lt;/strong&gt; - This is the time right before the DOMContentLoaded event.  It also represents the time after the browser has parsed all the scripts that used the defer attribute and not the async attribute.  (So when do async script run?  As soon as they are downloaded they are run… asynchronously).&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;domContentLoadedEventEnd&lt;/strong&gt; - This is the time right after the DOMContentLoaded event.  This happens once all scripts that are not part of the load event have completed.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;domComplete&lt;/strong&gt; - This is just before the document readiness state is set to complete.  &lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;loadEventStart&lt;/strong&gt; - This is just before the document’s load event is fired.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;loadEventEnd&lt;/strong&gt; - This is just after the document’s load event.  If the event was not fired or not completed, this is zero.&lt;/p&gt;
+
+&lt;h3 id=&quot;so-what-do-we-do-with-all-this&quot;&gt;So What Do We Do With All This?&lt;/h3&gt;
+
+&lt;p&gt;Measure All The Things!  Literally, just start measuring.  There’s a lot of information at our fingertips and it can be combined in various useful ways.  Here’s an example from a GitHub repo by Alois Reitbauer (a member of the W3C performance group).  You can find the repo here: &lt;a href=&quot;https://github.com/AloisReitbauer/w3cinpractice&quot;&gt;https://github.com/AloisReitbauer/w3cinpractice&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var timing= performance.timing;
+var loadTime= (timing.loadEventEnd- timing.navigationStart)/1000;
+console.log(&#39;Page took &#39; + loadTime.toFixed(2) + &#39; seconds to load&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That’s just the start.  By recording various combinations of these, we can start to understand real user metrics (RUM) and make our users’ experiences better.&lt;/p&gt;
+
+&lt;p&gt;Happpy Coding.&lt;/p&gt;
+</description>
+				<pubDate>Wed, 01 Oct 2014 23:30:30 -0400</pubDate>
+				<link>/2014/10/01/2014-10-01-navigation-timing.html</link>
+				<guid isPermaLink="true">/2014/10/01/2014-10-01-navigation-timing.html</guid>
+			</item>
+		
+			<item>
 				<title>Navigation Timing</title>
 				<description>&lt;p&gt;I was fortunate enough to be able to attend the Velocity conference in New York and I have to say, I’m pretty pumped about what I’ve learned.  There’s actually so much to share that it’ll take a little time to get through so today I thought I’d start with the timing api’s.&lt;/p&gt;
 
@@ -229,6 +586,48 @@ console.log(&#39;Page took &#39; + loadTime.toFixed(2) + &#39; seconds to load&#
 			</item>
 		
 			<item>
+				<title>Browser Timing API's</title>
+				<description>
+</description>
+				<pubDate>Mon, 22 Sep 2014 22:06:50 -0400</pubDate>
+				<link>/2014/09/22/browser-timing-api.html</link>
+				<guid isPermaLink="true">/2014/09/22/browser-timing-api.html</guid>
+			</item>
+		
+			<item>
+				<title>Waiting for User Input</title>
+				<description>&lt;p&gt;I love it when things are crazy simple and this is something I want to remember.&lt;/p&gt;
+
+&lt;p&gt;My current project has a form that can be filtered with user input via a textbox.  Pretty simple AJAX stuff, nothing too fancy.  Another developer outside the team even coded it for us so hurray for freebies.  He even went as far as implementing a pretty simple system to keep the input from overloading the server with search queries.&lt;/p&gt;
+
+&lt;p&gt;The problem is, it wasn’t quite enough.  We noticed that just simply typing two or three characters resulted in a minimum of two queries sent to the server.  That’s nothing too worrying, however, one of my designers was trying to implement animations on the search results to help the user understand that something is happening while they’re typing and multiple searches were killing the animation’s ability to keep up.  This resulted in a “janky” animation.&lt;/p&gt;
+
+&lt;p&gt;We decided to implement this code in order to make the search wait until the user stops typing:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var keywait;
+$scope.searchChanged = function () {
+	clearTimeout(keywait);
+	keywait = setTimeout(function () {
+		if ($scope.querying) {
+			$scope.queryOnReturn = true;
+			return;
+		}
+
+		getActivities();
+	}, 240);
+};
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The relevant bits here are the clearTimeout call and the setTimeout call.  The 240 millisecond timeout is completely based on how fast I type.&lt;/p&gt;
+
+&lt;p&gt;Happy Coding.&lt;/p&gt;
+</description>
+				<pubDate>Mon, 22 Sep 2014 21:54:01 -0400</pubDate>
+				<link>/2014/09/22/waiting-for-user-input.html</link>
+				<guid isPermaLink="true">/2014/09/22/waiting-for-user-input.html</guid>
+			</item>
+		
+			<item>
 				<title>Waiting for User Input</title>
 				<description>&lt;p&gt;I love it when things are crazy simple and this is something I want to remember.&lt;/p&gt;
 
@@ -262,214 +661,12 @@ $scope.searchChanged = function () {
 			</item>
 		
 			<item>
-				<title>The Critical Rendering Path</title>
-				<description>&lt;p&gt;Not too long ago, my development studies took me down the web performance path.  There’s a lot to cover when it comes to web site performance ranging from highly technical to just plain common sense.  In this post, I’m going to focus on what I see as a peformance fundamental once you’ve moved past the &lt;a href=&quot;https://developer.yahoo.com/performance/rules.html&quot;&gt;common sense development&lt;/a&gt;.  Let’s talk about the Critical Rendering Path.&lt;/p&gt;
-
-&lt;h3 id=&quot;what-is-the-critical-rendering-path&quot;&gt;What is the Critical Rendering Path?&lt;/h3&gt;
-
-&lt;p&gt;Most of the time, a developer is concerned with the performance of his code either on the server or in the browser.  We’re mindful of the objects we create, the memory we consume and how quickly our code executes.  This is great stuff, but there’s another opportunity for improvement.  How quickly can the browser fetch, parse and render our website?  How long does it take for something to appear on the screen after the user clicks a link?  This is what the Critical Rendering Path is all about.&lt;/p&gt;
-
-&lt;p&gt;To be thorough, here’s a definition directly &lt;a href=&quot;https://developers.google.com/web/fundamentals/performance/critical-rendering-path/&quot;&gt;from Google&lt;/a&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Optimizing for performance is all about understanding what happens in these intermediate steps between receiving the HTML, CSS, and JavaScript bytes and the required processing to turn them into rendered pixels - that’s the critical rendering path.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;the-crp-at-30000ft&quot;&gt;The CRP at 30,000ft&lt;/h3&gt;
-
-&lt;p&gt;The link above is great reading and tells you everything you want to know about the CRP, so I’m not going to repeat those details here.  Instead, here’s my “CRP Elevator Talk”.&lt;/p&gt;
-
-&lt;p&gt;In order to display our website, the browser has to go through a few steps (please read Google’s info on the CRP, these steps are overly simplified)	:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Download the html and start to parse/create the DOM.&lt;/li&gt;
-  &lt;li&gt;If there are any specified css files, download and begin to parse/create the CSSOM.&lt;/li&gt;
-  &lt;li&gt;Combine the DOM and CSSOM into a Render Tree.&lt;/li&gt;
-  &lt;li&gt;Execute Javascript.&lt;/li&gt;
-  &lt;li&gt;Render the page.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;what-is-a-blocking-operation&quot;&gt;What is a Blocking Operation?&lt;/h3&gt;
-
-&lt;p&gt;A blocking operation is anything that keeps the browser from being able to render the page to the screen, and in the process outlined above, we have a few render blocking operations.&lt;/p&gt;
-
-&lt;p&gt;First, we can’t display a single thing until we’ve downloaded the html and text.  Obvious but true.&lt;/p&gt;
-
-&lt;p&gt;Second, most browsers treat the CSS as a render blocking operation.  Have you ever seen a site that uses css but for some reason the css isn’t applied?  It’s not pretty, so most browsers will say “Oh, we have css, let’s not show anything until we’ve calculated and applied all the right styles.”&lt;/p&gt;
-
-&lt;p&gt;Third Javascript can block in a few different ways.  The first way Javascript will block is with inline scripts.  As we know, Javascript can edit both the DOM and the CSSOM.  Consider this code:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;html&amp;gt;
-&amp;lt;head&amp;gt;&amp;lt;/head&amp;gt;
-&amp;lt;body&amp;gt;
-&amp;lt;span&amp;gt;Hello World!&amp;lt;/span&amp;gt;
-&amp;lt;script&amp;gt;
-	var span = document.getElementsByTagName(&#39;span&#39;)[0];
-	span.textContent = &#39;Hi!&#39;;
-&amp;lt;/script&amp;gt;
-&amp;lt;/body&amp;gt;
-&amp;lt;/html&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This code will display “Hi!”” in the browser window.  What if we change it to this?&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;html&amp;gt;
-&amp;lt;head&amp;gt;&amp;lt;/head&amp;gt;
-&amp;lt;body&amp;gt;
-&amp;lt;script&amp;gt;
-	var span = document.getElementsByTagName(&#39;span&#39;)[0];
-	span.textContent = &#39;Hi!&#39;;
-&amp;lt;/script&amp;gt;
-&amp;lt;span&amp;gt;Hello World!&amp;lt;/span&amp;gt;
-&amp;lt;/body&amp;gt;
-&amp;lt;/html&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now we see the words “Hello World”.  What happened?  Well clearly we’ve downloaded the necessary resource, the html file (the DOM is actually created incrementally).  According to the critical rendering path, the next step is to start parsing the html and begin creating the DOM.  So in the “Hello World!” case, the browser processes the html tag, then the head, then the body and then it gets to our poorly placed script tag.  The script looks for a span element in the current DOM that has been constructed so far.  Since the span element hasn’t been processed yet, the script cannot execute properly.  If you check the Chrome dev tool console, you’ll see the script tell you it can’t find it, because the script blocked the browser from parsing and creating all of the DOM.&lt;/p&gt;
-
-&lt;p&gt;It get’s even worse when you consider the CSSOM.  Consider, if we had specified a css file in the head for our simple site.  As the browser began to parse and create the DOM, it would come upon the link tag that specified the css file and start to download the file.  As the css file was downloading the browser would continue parsing the rest of the DOM.  Maybe we also decided to change our inline script to edit the page styles:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;html&amp;gt;
-&amp;lt;head&amp;gt;
-&amp;lt;link rel=&quot;stylesheet&quot; href=&quot;mystyle.css&quot;&amp;gt;
-&amp;lt;/head&amp;gt;
-&amp;lt;body&amp;gt;
-&amp;lt;span&amp;gt;Hello World!&amp;lt;/span&amp;gt;
-&amp;lt;script&amp;gt;
-	var span = document.getElementsByTagName(&#39;span&#39;)[0];
-    span.textContent = &#39;Hi!&#39;; // changes the DOM
-    span.style.color = &#39;blue&#39;;
-&amp;lt;/script&amp;gt;
-&amp;lt;/body&amp;gt;
-&amp;lt;/html&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;On a good connection, everything here is fine; the “Hi!” is rendered and it’s blue.  A bad connection, however, might notice the page takes a little longer.  In order for the script to be able to edit a style, a CSSOM must exist, but if the css file is still downloading, then the CSSOM hasn’t been created.  In this case, the Javascript engine must wait for the css file to download and for the CSSOM to be created.  Only then, can it execute the blue color change.&lt;/p&gt;
-
-&lt;p&gt;Additionally, there’s another consequence of this style block, the DOM still hasn’t been completed.  Another render block.&lt;/p&gt;
-
-&lt;h3 id=&quot;can-i-see-the-crp-in-action&quot;&gt;Can I see the CRP in Action?&lt;/h3&gt;
-
-&lt;p&gt;Actually, yes we can see the CRP.  The network tab in the Chrome dev tools gives us snapshot of the CRP in action.  Here’s what you do.&lt;/p&gt;
-
-&lt;p&gt;Open Chrome, navigate to your site and open up the dev tools (Win - Ctrl + Shift + I, Mac - Cmd + Option + I).  Click the network tab and then refresh your page.  After the page is done loading, dev tools reports with some very useful info.  First of all, at the bottom of dev tools, notice the DOMContentLoaded value (in seconds).  A very brief explanation of DOMContentLoaded is that the DOM has been completely constructed and no css is blocking Javascript execution.  Side note, this is the point where most third party javascript libraries start their execution.&lt;/p&gt;
-
-&lt;p&gt;Next, within the Network tab, scroll back up to the top and find the network request for the html file; it’s probably the first request.  Note how long it took to make the request and receive the entire file.  Now note the difference between the time it took to get the html file and the DOMContentLoaded event.  This is the time when the CRP is in action.&lt;/p&gt;
-
-&lt;p&gt;Ideally, this time difference is small but if it’s not, there’s room for improvement.&lt;/p&gt;
-
-&lt;h3 id=&quot;crp-applied&quot;&gt;CRP Applied&lt;/h3&gt;
-
-&lt;p&gt;The next natural question is, “How do I optimize the CRP?”.  Well it turns out that the answer is, it depends.&lt;/p&gt;
-
-&lt;p&gt;Our web apps are pretty unique so your site problems aren’t my site problems.  There are, however, a few things we can always check:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Number of resources required for the page to render - minimize the number of css and javascript files that are required for your page.  A lot of CRP time can be spent in network traffic.&lt;/li&gt;
-  &lt;li&gt;Eliminate redirects.  Again, the network traffic matters.&lt;/li&gt;
-  &lt;li&gt;Inline the above the fold css and critical js.&lt;/li&gt;
-  &lt;li&gt;Make sure the javascript on your page is absolutely necessary to render the page.  If it’s not, mark the external javascript file as asynch.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;These suggestions are just the tip of the iceberg; more to come.&lt;/p&gt;
-
-&lt;p&gt;Happy Coding.&lt;/p&gt;
+				<title>Industry Leaders and Learning</title>
+				<description>
 </description>
-				<pubDate>Mon, 15 Sep 2014 00:00:00 -0400</pubDate>
-				<link>/2014/09/15/critical-rendering-path.html</link>
-				<guid isPermaLink="true">/2014/09/15/critical-rendering-path.html</guid>
-			</item>
-		
-			<item>
-				<title>Introduction to Protractor</title>
-				<description>&lt;p&gt;I’m currently working on a project wherein my team has received code from another company.  Ultimately, we’re working to replace the legacy code but in the meantime we still have to work with and support it.&lt;/p&gt;
-
-&lt;p&gt;The project started off well enough, however, a few weeks in we discovered that our inherited code base is a beast, and it bites.  More than once, one of the programmers would be working on a feature, meet the acceptance criteria, turn in his work and then discover that his work created a new bug.  After being frustrated one too many times, we decided end to end testing was in order.  Enter Protractor.&lt;/p&gt;
-
-&lt;h3 id=&quot;where-to-start&quot;&gt;Where to Start&lt;/h3&gt;
-
-&lt;p&gt;For anyone that doesn’t know, Protractor is an end to end (e2e) testing solution specificly tuned to Angular applications.  It uses Selenium, and Jasmine as it’s two primary technologies and allows you to automate launching a browser, going to a specific webpage, and programmatically interacting with items on the page.  Then you can tell Protractor “Ok Protractor, after all the interaction is done, you should see item x display content y.”  It’s super handy.&lt;/p&gt;
-
-&lt;p&gt;To get started, you really only need to go here: &lt;a href=&quot;https://github.com/angular/protractor/blob/master/docs/tutorial.md&quot;&gt;https://github.com/angular/protractor/blob/master/docs/tutorial.md&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;The tutorial is clear and straightforward and applying Protractor to your Angular application is incredibly intuitive.  We had a login/logout test running in about 5 minutes.&lt;/p&gt;
-
-&lt;p&gt;Happy Coding.&lt;/p&gt;
-</description>
-				<pubDate>Mon, 08 Sep 2014 00:00:00 -0400</pubDate>
-				<link>/2014/09/08/intro-to-protractor.html</link>
-				<guid isPermaLink="true">/2014/09/08/intro-to-protractor.html</guid>
-			</item>
-		
-			<item>
-				<title>Quickstart Jekyll Guide</title>
-				<description>&lt;p&gt;When I finally made the decision to start blogging I had to find a place to host that blog.  I’m a fan of keeping like things in a central location so a blog about development lives in the same place I work, Github.  A quick Google revealed Jekyll as the primary blogging platform that works with Github so I downloaded it.&lt;/p&gt;
-
-&lt;p&gt;Unfortunately, being completely ignorant of all things Ruby/Gem made getting this blog off the ground a little more tedious than it should have been; at least that’s what I originally thought.  Turns out, I just confused myself.  Setting up a Jekyll blog is actually quite simple.  Jekyll comes with excellent documentation and there are a few guides available on the net that can be invaluable.  With that in mind, I’m just going to share a few points that stumped me and give you a few required links.&lt;/p&gt;
-
-&lt;h3 id=&quot;but-first-the-quickstart-guide&quot;&gt;But First, the Quickstart Guide&lt;/h3&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Follow &lt;a href=&quot;http://jekyllrb.com/docs/quickstart/&quot;&gt;these instructions&lt;/a&gt; to install and test locally (note: on my OSX, I had to run “sudo gem install jekyll”).&lt;/li&gt;
-  &lt;li&gt;At this point, you could literally edit your files the way you see fit and then check your new blog into the master branch of your Github &lt;a href=&quot;https://pages.github.com/&quot;&gt;personal page&lt;/a&gt;.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;just-check-in-everything&quot;&gt;Just Check in Everything&lt;/h3&gt;
-
-&lt;p&gt;Jekyll has a great system that allows you to build your static files and then serve them locally to review your work before publishing.  The documentation explains in great detail all about the directory structure and tells you where the compiled site is generated (the _site folder).  So when I read this I wondered, “So what do I actually push up to Github?”&lt;/p&gt;
-
-&lt;p&gt;Everything.  Plain and simple.&lt;/p&gt;
-
-&lt;p&gt;Github understands a Jekyll blog so it knows what to look for and what to build and what to display.  It just works.&lt;/p&gt;
-
-&lt;h3 id=&quot;templates&quot;&gt;Templates&lt;/h3&gt;
-
-&lt;p&gt;If you like the default look of the Jekyll blog then you’re all set, skip to the next section.  However if you want something a little different then read on.&lt;/p&gt;
-
-&lt;p&gt;Templates are available everywhere.  Google Jekyll templates and pick one you like.  I picked one and I’m pleased with it but once again I had another question that wasn’t immediately obvious, “How do I install the new template?”  Once again, the answer was simple:&lt;/p&gt;
-
-&lt;p&gt;Just copy and paste the files, then use Jekyll to rebuild your static site.&lt;/p&gt;
-
-&lt;p&gt;If you already have posts/drafts, all you need to do is back them up before you copy over everything.  No big deal.&lt;/p&gt;
-
-&lt;h3 id=&quot;static-pages&quot;&gt;Static Pages&lt;/h3&gt;
-
-&lt;p&gt;Finally, I wanted a resume page to exist on my blog.  Jekyll allows you to create static html pages but either it’s not documented or I missed the fact that you can generate a page using markdown that is not a part of the blog.  So here’s my setup.&lt;/p&gt;
-
-&lt;p&gt;In the root of my Jekyll site I created a resume folder.  Inside of that folder, I created index.md and edited that file as my resume.  When Jekyll builds, it generates {site}/resume/index.html.  Which means my resume is addressable as {site}/resume.  Nice.&lt;/p&gt;
-
-&lt;h3 id=&quot;useful-links&quot;&gt;Useful Links&lt;/h3&gt;
-
-&lt;p&gt;Here’s a great article from Smashing Magazine - &lt;a href=&quot;http://www.smashingmagazine.com/2014/08/01/build-blog-jekyll-github-pages/&quot;&gt;Build A Blog With Jekyll And GitHub Pages&lt;/a&gt; &lt;br /&gt;
-The Jekyll site itself - &lt;a href=&quot;http://jekyllrb.com/&quot;&gt;http://jekyllrb.com/&lt;/a&gt; &lt;br /&gt;
-Jekyll’s info about Github Pages - &lt;a href=&quot;http://jekyllrb.com/docs/github-pages/&quot;&gt;http://jekyllrb.com/docs/github-pages/&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Happy Coding.&lt;/p&gt;
-</description>
-				<pubDate>Tue, 02 Sep 2014 00:00:00 -0400</pubDate>
-				<link>/2014/09/02/quickstart-jekyll-guide.html</link>
-				<guid isPermaLink="true">/2014/09/02/quickstart-jekyll-guide.html</guid>
-			</item>
-		
-			<item>
-				<title>What's This all About?</title>
-				<description>&lt;p&gt;This is pretty much what you expect it to be, another blog from another developer, writing about the things he learns.&lt;/p&gt;
-
-&lt;p&gt;I have a few goals for myself with this blog:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Share new things that I learn: My job offers plenty of opportunities to try new things and experiment.&lt;/li&gt;
-  &lt;li&gt;Improve my writing skill: Frankly, it’s time for me to level up in the communication department.&lt;/li&gt;
-  &lt;li&gt;Remember stuff: There’s just too much stuff to remember.  Evernote is great, but a public site has it’s advantages.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;So that’s it.  Drafts are in progress and I have a goal of posting on a psuedo regular basis.  We’ll see how this turns out.&lt;/p&gt;
-
-&lt;p&gt;Happy Coding&lt;/p&gt;
-</description>
-				<pubDate>Mon, 01 Sep 2014 00:00:00 -0400</pubDate>
-				<link>/2014/09/01/whats-this.html</link>
-				<guid isPermaLink="true">/2014/09/01/whats-this.html</guid>
+				<pubDate>Wed, 17 Sep 2014 11:57:45 -0400</pubDate>
+				<link>/2014/09/17/industry-leaders-and-testing.html</link>
+				<guid isPermaLink="true">/2014/09/17/industry-leaders-and-testing.html</guid>
 			</item>
 		
 	</channel>
