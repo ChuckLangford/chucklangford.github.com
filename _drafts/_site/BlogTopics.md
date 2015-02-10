@@ -1,0 +1,27 @@
+- Impact of page speed on business
+- List of tools mentioned in Velocity NY 2014
+- List of talks and slides from Velocity NY 2014
+- Implementing a third party script SLA
+- Waterfalls 101
+- Discovering the performance poverty line
+- Creating a strategy for continual performance improvements and experimentation
+- Why to roll your own webpagetest.org
+- Bucketing your users with performance data
+- Joining a W3C group and contributing
+- The W3C Beacon spec
+- Design and how it affects our api endpoints
+- Measuring performance above the fold
+- Review of the best image type to use
+- All about the browser preloader
+- On Experimentation
+- Monitoring third party scripts
+- A Quick and Easy way to Measure Performance: WebPageTest.org
+- Even the big sites have issues
+- Using Google BigQuery and HttpArchive to Answer Questions
+- Creating a strategy for SPOF and Practicing that strategy
+- Don't forget the basics
+- Relating performance to value
+- The importance of page speed on user perception
+- Tags
+- The new html parser: pup
+- Manually auditing site performance

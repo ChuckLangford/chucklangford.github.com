@@ -7,6 +7,87 @@
 		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>My Current Planning System</title>
+				<description>&lt;p&gt;In a recent office meeting, I had the opportunity to share my daily planning system.  I explained a bit about what I do to plan my days and keep track of my goals and there was enough interest that I was asked to lead a lunch and learn on the subject.  So I figured I might as well go ahead and share the same here.&lt;/p&gt;
+
+&lt;h3 id=&quot;in-a-nutshell&quot;&gt;In a Nutshell&lt;/h3&gt;
+
+&lt;p&gt;Everyday, I fill out a daily planning worksheet. It is split into two main parts: The Morning Ritual and The Evening Ritual.  They’re so named because I wanted to think of them as something I automatically do when I wake up and before I go to bed.  At the end of each section, I include a few personal reminders of mental exercises I want to run through as well.  Really, the purpose of the entire worksheet is to prompt me to think about or do something.&lt;/p&gt;
+
+&lt;p&gt;After filling in the worksheet, I take all the actionable items and transfer them into a todo list application.  Throughout the day, I refer to this list to make sure I’m addressing everything from the worksheet.&lt;/p&gt;
+
+&lt;p&gt;At the end of the day, I go back to the same worksheet and fill out The Evening Ritual.  This gives me an opportunity to review my day and learn a few lessons.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-worksheet&quot;&gt;The Worksheet&lt;/h3&gt;
+
+&lt;p&gt;Below is a slimmed down version of my daily worksheet.  I’ve removed things that apply to me.  If you decide to utilize this worksheet, you really should personalize to fit your needs.  Also, don’t be afraid to change your worksheet at any time.&lt;/p&gt;
+
+&lt;p&gt;Most of questions are pretty self explanatory, however, I’ve added notes where I think they might help.&lt;/p&gt;
+
+&lt;h4 id=&quot;the-morning-ritual&quot;&gt;The Morning Ritual&lt;/h4&gt;
+
+&lt;h5 id=&quot;my-stand&quot;&gt;My Stand&lt;/h5&gt;
+&lt;p&gt;**This came from another exercise.  It lists the things you stand for.  I like to review these everyday.&lt;/p&gt;
+
+&lt;h5 id=&quot;my-values&quot;&gt;My Values&lt;/h5&gt;
+&lt;p&gt;**This lists the things that I value and the things I want less of.  Think of it as two categories: things I want more of in my life, and things I want less of.&lt;/p&gt;
+
+&lt;p&gt;How am I going to take care of the four parts of my being today? Or how will I deliberately practice them?&lt;/p&gt;
+
+&lt;p&gt;One good thing about myself:&lt;/p&gt;
+
+&lt;p&gt;What and whom am I grateful for today?&lt;/p&gt;
+
+&lt;p&gt;What am I excited about and looking forward to doing today?&lt;/p&gt;
+
+&lt;p&gt;What is my purpose, and do my plans for today connect me to it?&lt;/p&gt;
+
+&lt;p&gt;How can I move the dial toward my goals today?&lt;/p&gt;
+
+&lt;p&gt;To whom can I reach out and serve or thank today?&lt;/p&gt;
+
+&lt;p&gt;Are my goals still aligned with my purpose?&lt;/p&gt;
+
+&lt;p&gt;The One Thing (the most important thing I will achieve this day and/or week):&lt;/p&gt;
+
+&lt;p&gt;Priority Tasks (that I must complete today or this week):&lt;/p&gt;
+
+&lt;p&gt;Projects (to work on one step at a minimum each day):&lt;/p&gt;
+
+&lt;p&gt;Contacts (calls/emails to people I need to connect with):&lt;/p&gt;
+
+&lt;p&gt;Habit (what am I working on this week, and how):&lt;/p&gt;
+
+&lt;p&gt;Notes, Ideas, Inspiration (any ideas that came up during the morning ritual):&lt;/p&gt;
+
+&lt;h4 id=&quot;the-evening-ritual&quot;&gt;The Evening Ritual&lt;/h4&gt;
+
+&lt;p&gt;Did I achieve my One Thing?&lt;/p&gt;
+
+&lt;p&gt;Was I “on” and in the zone today or “off” and unbalanced?&lt;/p&gt;
+
+&lt;p&gt;What contributed to this feeling?&lt;/p&gt;
+
+&lt;p&gt;What were the top three positive things I accomplished or that happened today?&lt;/p&gt;
+
+&lt;p&gt;What did I learn from them?&lt;/p&gt;
+
+&lt;p&gt;Are there unsolved challenges I would like my subconscious mind to help me solve tonight?&lt;/p&gt;
+
+&lt;p&gt;What went wrong today and what is the silver lining?&lt;/p&gt;
+
+&lt;p&gt;One thing I’m grateful for:&lt;/p&gt;
+
+&lt;h3 id=&quot;the-results&quot;&gt;The Results&lt;/h3&gt;
+
+&lt;p&gt;Personally, I’ve found this system helps me to focus on the big life goals as well as the smaller day to day tasks.  The prompting questions go a long way in making sure I address the various aspects of my life.  It forces me to think about how I’ll be a better husband, father, or employee.&lt;/p&gt;
+</description>
+				<pubDate>Mon, 09 Feb 2015 20:48:03 -0500</pubDate>
+				<link>/2015/02/09/my-planning-system.html</link>
+				<guid isPermaLink="true">/2015/02/09/my-planning-system.html</guid>
+			</item>
+		
+			<item>
 				<title>User Timing</title>
 				<description>&lt;p&gt;After reviewing both the Navigation and Resource timing specifications, we’ve finally arrived at the User timing spec.  This is the last of the performance timing specifications I’ll review, and thankfully, one of the most straightforward.&lt;/p&gt;
 
@@ -100,6 +181,104 @@ performance.measure(scriptSource, scriptSource + &#39;Start&#39;);
 &lt;p&gt;With this in your javascript file, you query the measure types to find the duration of your scripts. &lt;/p&gt;
 </description>
 				<pubDate>Sun, 02 Nov 2014 16:46:35 -0500</pubDate>
+				<link>/2014/11/02/user-timing.html</link>
+				<guid isPermaLink="true">/2014/11/02/user-timing.html</guid>
+			</item>
+		
+			<item>
+				<title>User Timing</title>
+				<description>&lt;p&gt;After reviewing both the Navigation and Resource timing specifications, we’ve finally arrived at the User timing spec.  This is the last of the performance timing specifications I’ll review, and thankfully, one of the most straightforward.&lt;/p&gt;
+
+&lt;h3 id=&quot;user-timing-in-a-nutshell&quot;&gt;User Timing in a Nutshell&lt;/h3&gt;
+
+&lt;p&gt;The User Timing api allows you to measure the performance of your javascript.  Quite simply, it allows you to specify a start time at any point in your code, an end point at any point in your code, and then measure the difference between the two.&lt;/p&gt;
+
+&lt;h3 id=&quot;i-can-already-do-that-with-datenow&quot;&gt;“I Can Already Do That With Date.now()”&lt;/h3&gt;
+
+&lt;p&gt;Yes you can.  So why do we need an api for something we can already do?  The spec tells us: “…the precision of this timestamp varies between user agents.”  To put it another way, the browsers are too inconsistent in how they report Date.now().&lt;/p&gt;
+
+&lt;h3 id=&quot;marks&quot;&gt;Marks&lt;/h3&gt;
+
+&lt;p&gt;Before getting into the details, it’s important to understand that all time measurements created with the User Timing api are relative to the navigation start time of the page.  In other words, when you navigate to the page, the timer starts at 0 and works it way up.&lt;/p&gt;
+
+&lt;p&gt;To record a start or end time, you use the mark method;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;performance.mark(&quot;startTime1&quot;);
+yourCode();
+performance.mark(&quot;endTime1&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The only things you need to know when creating a mark are 1) You can’t use a reserved word and 2) You can reuse the same name; the value will just be overwritten each time.&lt;/p&gt;
+
+&lt;p&gt;In order to access the values of a mark you created, request the marks from the performance object:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var perfEntries = performance.getEntriesByType(&quot;mark&quot;);
+for (var i = 0; i &amp;lt; perfEntries.length; i++) {
+  if (window.console) console.log(&quot;Name: &quot;        + perfEntries[i].name      + 
+                                  &quot; Entry Type: &quot; + perfEntries[i].entryType +
+                                  &quot; Start Time: &quot; + perfEntries[i].startTime + 
+                                  &quot; Duration: &quot;   + perfEntries[i].duration  + &quot;\n&quot;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;name&lt;/strong&gt; - This is the name you gave the mark.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;entryType&lt;/strong&gt; - This will be “mark”.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;startTime&lt;/strong&gt; - This is the time value that was recorded when your mark function ran.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;duration&lt;/strong&gt; - For a mark, this will return a 0.&lt;/p&gt;
+
+&lt;h3 id=&quot;measures&quot;&gt;Measures&lt;/h3&gt;
+
+&lt;p&gt;The measure function is a convenience method that finds the difference between two marks and stores it in a named measure.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;performance.measure(&#39;myNewMeasure&#39;, &#39;markOneStart&#39;, &#39;markOneEnd&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Retrieving measure values is done exactly the same way as marks except you specify “measure” as the type to retrieve:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var perfEntries = performance.getEntriesByType(&quot;measure&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;name&lt;/strong&gt; - This is the name you have assigned to the measure.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;entryType&lt;/strong&gt; - This will be “measure”.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;startTime&lt;/strong&gt; - This is the time the measure was taken.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;duration&lt;/strong&gt; - This is the calculated duration of the measure.&lt;/p&gt;
+
+&lt;p&gt;The measure function also has two other modes of operation you need to be aware.  First, if you only specify a measure name, then the reported duration will be the difference between the navigation start and the current time.&lt;/p&gt;
+
+&lt;p&gt;Second, if you only specify a measure name and a start mark name, then the reported duration will be the difference between the start mark and the current time.&lt;/p&gt;
+
+&lt;h3 id=&quot;methods-to-be-aware-of&quot;&gt;Methods to be Aware Of&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;clearMarks&lt;/strong&gt; - If you call this method with no name, you’ll clear all the marks on the page.  If you specify a mark name, it will clear all the marks with that name.  If you specify a mark name that doesn’t exist, then this function does nothing.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;clearMeasures&lt;/strong&gt; - This behaves in all the same ways as the clearMarks function except it applies to your measures.&lt;/p&gt;
+
+&lt;h3 id=&quot;example&quot;&gt;Example&lt;/h3&gt;
+
+&lt;p&gt;Here’s an example of how you might use this code in an external javascript file.  Once again, I’m relying heavily on a &lt;a href=&quot;https://github.com/AloisReitbauer/w3cinpractice&quot;&gt;repo&lt;/a&gt; from Alois Reitbauer.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var scriptSource = &#39;myScriptName&#39;; 
+
+performance.mark(scriptSource + &#39;Start&#39;);
+
+var delay= 5 * 1000 // 10 seconds
+var quitAt = Date.now() + delay;
+while (Date.now() &amp;lt;= quitAt){
+  ; // good old busy waiting - doing nothing
+}
+
+performance.measure(scriptSource, scriptSource + &#39;Start&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With this in your javascript file, you query the measure types to find the duration of your scripts. &lt;/p&gt;
+</description>
+				<pubDate>Sun, 02 Nov 2014 00:00:00 -0400</pubDate>
 				<link>/2014/11/02/user-timing.html</link>
 				<guid isPermaLink="true">/2014/11/02/user-timing.html</guid>
 			</item>
@@ -625,48 +804,6 @@ $scope.searchChanged = function () {
 				<pubDate>Mon, 22 Sep 2014 21:54:01 -0400</pubDate>
 				<link>/2014/09/22/waiting-for-user-input.html</link>
 				<guid isPermaLink="true">/2014/09/22/waiting-for-user-input.html</guid>
-			</item>
-		
-			<item>
-				<title>Waiting for User Input</title>
-				<description>&lt;p&gt;I love it when things are crazy simple and this is something I want to remember.&lt;/p&gt;
-
-&lt;p&gt;My current project has a form that can be filtered with user input via a textbox.  Pretty simple AJAX stuff, nothing too fancy.  Another developer outside the team even coded it for us so hurray for freebies.  He even went as far as implementing a pretty simple system to keep the input from overloading the server with search queries.&lt;/p&gt;
-
-&lt;p&gt;The problem is, it wasn’t quite enough.  We noticed that just simply typing two or three characters resulted in a minimum of two queries sent to the server.  That’s nothing too worrying, however, one of my designers was trying to implement animations on the search results to help the user understand that something is happening while they’re typing and multiple searches were killing the animation’s ability to keep up.  This resulted in a “janky” animation.&lt;/p&gt;
-
-&lt;p&gt;We decided to implement this code in order to make the search wait until the user stops typing:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;var keywait;
-$scope.searchChanged = function () {
-	clearTimeout(keywait);
-	keywait = setTimeout(function () {
-		if ($scope.querying) {
-			$scope.queryOnReturn = true;
-			return;
-		}
-
-		getActivities();
-	}, 240);
-};
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The relevant bits here are the clearTimeout call and the setTimeout call.  The 240 millisecond timeout is completely based on how fast I type.&lt;/p&gt;
-
-&lt;p&gt;Happy Coding.&lt;/p&gt;
-</description>
-				<pubDate>Mon, 22 Sep 2014 00:00:00 -0400</pubDate>
-				<link>/2014/09/22/waiting-for-user-input.html</link>
-				<guid isPermaLink="true">/2014/09/22/waiting-for-user-input.html</guid>
-			</item>
-		
-			<item>
-				<title>Industry Leaders and Learning</title>
-				<description>
-</description>
-				<pubDate>Wed, 17 Sep 2014 11:57:45 -0400</pubDate>
-				<link>/2014/09/17/industry-leaders-and-testing.html</link>
-				<guid isPermaLink="true">/2014/09/17/industry-leaders-and-testing.html</guid>
 			</item>
 		
 	</channel>

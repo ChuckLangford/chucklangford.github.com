@@ -1,0 +1,40 @@
+<p>When I finally made the decision to start blogging I had to find a place to host that blog.  I’m a fan of keeping like things in a central location so a blog about development lives in the same place I work, Github.  A quick Google revealed Jekyll as the primary blogging platform that works with Github so I downloaded it.</p>
+
+<p>Unfortunately, being completely ignorant of all things Ruby/Gem made getting this blog off the ground a little more tedious than it should have been; at least that’s what I originally thought.  Turns out, I just confused myself.  Setting up a Jekyll blog is actually quite simple.  Jekyll comes with excellent documentation and there are a few guides available on the net that can be invaluable.  With that in mind, I’m just going to share a few points that stumped me and give you a few required links.</p>
+
+<h3 id="but-first-the-quickstart-guide">But First, the Quickstart Guide</h3>
+
+<ol>
+  <li>Follow <a href="http://jekyllrb.com/docs/quickstart/">these instructions</a> to install and test locally (note: on my OSX, I had to run “sudo gem install jekyll”).</li>
+  <li>At this point, you could literally edit your files the way you see fit and then check your new blog into the master branch of your Github <a href="https://pages.github.com/">personal page</a>.</li>
+</ol>
+
+<h3 id="just-check-in-everything">Just Check in Everything</h3>
+
+<p>Jekyll has a great system that allows you to build your static files and then serve them locally to review your work before publishing.  The documentation explains in great detail all about the directory structure and tells you where the compiled site is generated (the _site folder).  So when I read this I wondered, “So what do I actually push up to Github?”</p>
+
+<p>Everything.  Plain and simple.</p>
+
+<p>Github understands a Jekyll blog so it knows what to look for and what to build and what to display.  It just works.</p>
+
+<h3 id="templates">Templates</h3>
+
+<p>If you like the default look of the Jekyll blog then you’re all set, skip to the next section.  However if you want something a little different then read on.</p>
+
+<p>Templates are available everywhere.  Google Jekyll templates and pick one you like.  I picked one and I’m pleased with it but once again I had another question that wasn’t immediately obvious, “How do I install the new template?”  Once again, the answer was simple:</p>
+
+<p>Just copy and paste the files, then use Jekyll to rebuild your static site.</p>
+
+<p>If you already have posts/drafts, all you need to do is back them up before you copy over everything.  No big deal.</p>
+
+<h3 id="static-pages">Static Pages</h3>
+
+<p>Finally, I wanted a resume page to exist on my blog.  Jekyll allows you to create static html pages but either it’s not documented or I missed the fact that you can generate a page using markdown that is not a part of the blog.  So here’s my setup.</p>
+
+<p>In the root of my Jekyll site I created a resume folder.  Inside of that folder, I created index.md and edited that file as my resume.  When Jekyll builds, it generates {site}/resume/index.html.  Which means my resume is addressable as {site}/resume.  Nice.</p>
+
+<h3 id="useful-links">Useful Links</h3>
+
+<p>Here’s a great article from Smashing Magazine - <a href="http://www.smashingmagazine.com/2014/08/01/build-blog-jekyll-github-pages/">Build A Blog With Jekyll And GitHub Pages</a> <br />
+The Jekyll site itself - <a href="http://jekyllrb.com/">http://jekyllrb.com/</a> <br />
+Jekyll’s info about Github Pages - <a href="http://jekyllrb.com/docs/github-pages/">http://jekyllrb.com/docs/github-pages/</a></p>

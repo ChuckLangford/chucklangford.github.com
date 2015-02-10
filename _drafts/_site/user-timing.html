@@ -1,0 +1,90 @@
+<p>After reviewing both the Navigation and Resource timing specifications, we’ve finally arrived at the User timing spec.  This is the last of the performance timing specifications I’ll review, and thankfully, one of the most straightforward.</p>
+
+<h3 id="user-timing-in-a-nutshell">User Timing in a Nutshell</h3>
+
+<p>The User Timing api allows you to measure the performance of your javascript.  Quite simply, it allows you to specify a start time at any point in your code, an end point at any point in your code, and then measure the difference between the two.</p>
+
+<h3 id="i-can-already-do-that-with-datenow">“I Can Already Do That With Date.now()”</h3>
+
+<p>Yes you can.  So why do we need an api for something we can already do?  The spec tells us: “…the precision of this timestamp varies between user agents.”  To put it another way, the browsers are too inconsistent in how they report Date.now().</p>
+
+<h3 id="marks">Marks</h3>
+
+<p>Before getting into the details, it’s important to understand that all time measurements created with the User Timing api are relative to the navigation start time of the page.  In other words, when you navigate to the page, the timer starts at 0 and works it way up.</p>
+
+<p>To record a start or end time, you use the mark method;</p>
+
+<pre><code>performance.mark("startTime1");
+yourCode();
+performance.mark("endTime1");
+</code></pre>
+
+<p>The only things you need to know when creating a mark are 1) You can’t use a reserved word and 2) You can reuse the same name; the value will just be overwritten each time.</p>
+
+<p>In order to access the values of a mark you created, request the marks from the performance object:</p>
+
+<pre><code>var perfEntries = performance.getEntriesByType("mark");
+for (var i = 0; i &lt; perfEntries.length; i++) {
+  if (window.console) console.log("Name: "        + perfEntries[i].name      + 
+                                  " Entry Type: " + perfEntries[i].entryType +
+                                  " Start Time: " + perfEntries[i].startTime + 
+                                  " Duration: "   + perfEntries[i].duration  + "\n");
+}
+</code></pre>
+
+<p><strong>name</strong> - This is the name you gave the mark.</p>
+
+<p><strong>entryType</strong> - This will be “mark”.</p>
+
+<p><strong>startTime</strong> - This is the time value that was recorded when your mark function ran.</p>
+
+<p><strong>duration</strong> - For a mark, this will return a 0.</p>
+
+<h3 id="measures">Measures</h3>
+
+<p>The measure function is a convenience method that finds the difference between two marks and stores it in a named measure.</p>
+
+<pre><code>performance.measure('myNewMeasure', 'markOneStart', 'markOneEnd');
+</code></pre>
+
+<p>Retrieving measure values is done exactly the same way as marks except you specify “measure” as the type to retrieve:</p>
+
+<pre><code>var perfEntries = performance.getEntriesByType("measure");
+</code></pre>
+
+<p><strong>name</strong> - This is the name you have assigned to the measure.</p>
+
+<p><strong>entryType</strong> - This will be “measure”.</p>
+
+<p><strong>startTime</strong> - This is the time the measure was taken.</p>
+
+<p><strong>duration</strong> - This is the calculated duration of the measure.</p>
+
+<p>The measure function also has two other modes of operation you need to be aware.  First, if you only specify a measure name, then the reported duration will be the difference between the navigation start and the current time.</p>
+
+<p>Second, if you only specify a measure name and a start mark name, then the reported duration will be the difference between the start mark and the current time.</p>
+
+<h3 id="methods-to-be-aware-of">Methods to be Aware Of</h3>
+
+<p><strong>clearMarks</strong> - If you call this method with no name, you’ll clear all the marks on the page.  If you specify a mark name, it will clear all the marks with that name.  If you specify a mark name that doesn’t exist, then this function does nothing.</p>
+
+<p><strong>clearMeasures</strong> - This behaves in all the same ways as the clearMarks function except it applies to your measures.</p>
+
+<h3 id="example">Example</h3>
+
+<p>Here’s an example of how you might use this code in an external javascript file.  Once again, I’m relying heavily on a <a href="https://github.com/AloisReitbauer/w3cinpractice">repo</a> from Alois Reitbauer.</p>
+
+<pre><code>var scriptSource = 'myScriptName'; 
+
+performance.mark(scriptSource + 'Start');
+
+var delay= 5 * 1000 // 10 seconds
+var quitAt = Date.now() + delay;
+while (Date.now() &lt;= quitAt){
+  ; // good old busy waiting - doing nothing
+}
+
+performance.measure(scriptSource, scriptSource + 'Start');
+</code></pre>
+
+<p>With this in your javascript file, you query the measure types to find the duration of your scripts. </p>
